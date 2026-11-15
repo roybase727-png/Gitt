@@ -119,7 +119,7 @@ details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin
 </style>
 </head>
 <body>
-<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.3 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR + Det-Guarded Merge + AutoFix · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
+<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.5 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + JSON Repair + AI Test · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
 <div class="toast" id="toast"></div>
 <div class="sheet" id="sheet"><div id="sheetBody"></div></div>
 <script>
@@ -131,7 +131,7 @@ const keyOf=async(pw,s)=>{const m=await crypto.subtle.importKey('raw',enc.encode
 const db=()=>new Promise((ok,no)=>{const r=indexedDB.open('kaspet',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=no});
 const idbGet=async k=>{const d=await db();return new Promise((ok,no)=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>ok(q.result);q.onerror=no})};
 const idbSet=async(k,v)=>{const d=await db();return new Promise((ok,no)=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,k);t.oncomplete=ok;t.onerror=no})};
-const BUILD='9.0.3 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR + Det-Guarded Merge + AutoFix';
+const BUILD='9.0.5 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + JSON Repair + AI Test';
 const TYPES={'רכב':'🚗','דירה':'🏠','בריאות':'🩺','שיניים':'🦷','חיים':'❤️','משכנתא':'🏦','נסיעות':'✈️','תאונות':'🛡️','סיעוד':'🧓','עסק':'🏢','ועד בית':'🏢','אחר':'📄'};
 const CO_LIST=['הראל','מגדל','הפניקס','כלל ביטוח','מנורה מבטחים','AIG ישראל','שירביט','ביטוח ישיר','הכשרה','איילון','ליברה','כללית','מכבי','מאוחדת','לאומית','פספורטכארד','הדר','שומרה','ווישור (WeSure)','9 מיליון','שלמה ביטוח','ביטוח חקלאי'];
 const INS_DB=[['הראל',['הראל','harel'],['harel-group.co.il','harel.co.il'],[]],['מגדל',['מגדל','migdal'],['migdal.co.il'],[]],['הפניקס',['הפניקס','פניקס','phoenix','fenix'],['fnx.co.il','phoenix.co.il'],[]],['כלל ביטוח',['כלל ביטוח','כלל חברה לביטוח','clal'],['clalbit.co.il','clal.co.il'],['clal']],['מנורה מבטחים',['מנורה מבטחים','מנורה','menora'],['menoramivt.co.il'],[]],['איילון',['איילון','ayalon'],['ayalon-ins.co.il'],[]],['הכשרה',['הכשרה','hachshara'],['hachshara.co.il'],[]],['שומרה',['שומרה','shomera'],['shomera.co.il'],[]],['שירביט',['שירביט','shirbit'],['shirbit.co.il'],[]],['AIG ישראל',['aig','איי איי ג׳י'],['aig.co.il'],[]],['ביטוח ישיר',['ביטוח ישיר','איי די איי','idi'],['555.co.il'],[]],['ליברה',['ליברה','libra'],['libra.co.il'],[]],['ווישור (WeSure)',['ווישור','wesure'],['wesure.co.il'],[]],['שלמה ביטוח',['שלמה ביטוח','shlomo'],['shlomo.co.il'],[]],['9 מיליון',['9 מיליון','9million'],[],[]],['ביטוח חקלאי',['ביטוח חקלאי'],[],[]],['הדר',['הדר חברה לביטוח','הדר ביטוח'],[],[]],['מכבי',['מכבי','maccabi'],['maccabi4u.co.il'],['מכבי']],['כללית',['כללית','clalit'],['clalit.co.il'],['כללית']],['מאוחדת',['מאוחדת','meuhedet'],['meuhedet.co.il'],[]],['לאומית',['לאומית'],['leumit.co.il'],['לאומית']],['פספורטכארד',['פספורטכארד','passportcard'],['passportcard.co.il'],[]]];
@@ -154,7 +154,7 @@ function logHist(action,detail){try{S.history.unshift({ts:Date.now(),action,deta
 async function save(){if(!K)throw new Error('הכספת נעולה');try{const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},K,enc.encode(JSON.stringify(S)));await idbSet('v',{s:b64(salt),i:b64(iv),d:b64(ct)});return true}catch(e){toast('השמירה נכשלה — המידע לא נשמר. נסה שוב');throw e}}
 async function saveQuiet(){try{await save();return true}catch(e){return false}}
 function P(id){return S.p.find(x=>x.id===id)}
-function normalizePolicy(raw){const p={id:raw.id||uid(),type:raw.type||'אחר',co:raw.co||'',prod:raw.prod||'',ins:raw.ins||'',cust:raw.cust||'',num:raw.num||'',asset:raw.asset||'',start:raw.start||'',end:raw.end||'',prem:raw.prem==null?'':Number(raw.prem)||'',freq:raw.freq||'',ded:raw.ded||'',cl:raw.cl||'',agn:raw.agn||'',ag:raw.ag||'',who:raw.who||'',cov:raw.cov||'',ex:raw.ex||'',notice:raw.notice||'',steps:raw.steps||'',docs:raw.docs||'',ph:raw.ph||'',note:raw.note||'',full:raw.full||'',raw:raw.raw||'',personIds:raw.personIds||[],assetIds:raw.assetIds||[],docType:raw.docType||'',quality:raw.quality||null,docStatusText:raw.docStatusText||'',buildingYear:raw.buildingYear||'',numApartments:raw.numApartments||'',vaadRep:raw.vaadRep||'',chapters:raw.chapters||null,deductibles:raw.deductibles||null,specials:raw.specials||null,gaps:raw.gaps||null,createdAt:raw.createdAt||Date.now(),updatedAt:Date.now()};if(Array.isArray(p.who))p.who=p.who.join('\n');if(Array.isArray(p.cov))p.cov=p.cov.join('\n');if(Array.isArray(p.ex))p.ex=p.ex.join('\n');if(Array.isArray(p.steps))p.steps=p.steps.join('\n');if(Array.isArray(p.docs))p.docs=p.docs.join('\n');if(Array.isArray(p.ph))p.ph=p.ph.join('\n');return p}
+function normalizePolicy(raw){const p={id:raw.id||uid(),type:raw.type||'אחר',co:raw.co||'',prod:raw.prod||'',ins:raw.ins||'',cust:raw.cust||'',num:raw.num||'',asset:raw.asset||'',start:raw.start||'',end:raw.end||'',prem:raw.prem==null?'':Number(raw.prem)||'',freq:raw.freq||'',ded:raw.ded||'',cl:raw.cl||'',agn:raw.agn||'',ag:raw.ag||'',who:raw.who||'',cov:raw.cov||'',ex:raw.ex||'',notice:raw.notice||'',steps:raw.steps||'',docs:raw.docs||'',ph:raw.ph||'',note:raw.note||'',full:raw.full||'',raw:raw.raw||'',personIds:raw.personIds||[],assetIds:raw.assetIds||[],docType:raw.docType||'',quality:raw.quality||null,docStatusText:raw.docStatusText||'',buildingYear:raw.buildingYear||'',numApartments:raw.numApartments||'',vaadRep:raw.vaadRep||'',chapters:raw.chapters||null,deductibles:raw.deductibles||null,specials:raw.specials||null,gaps:raw.gaps||null,coverageItems:raw.coverageItems||null,createdAt:raw.createdAt||Date.now(),updatedAt:Date.now()};if(Array.isArray(p.who))p.who=p.who.join('\n');if(Array.isArray(p.cov))p.cov=p.cov.join('\n');if(Array.isArray(p.ex))p.ex=p.ex.join('\n');if(Array.isArray(p.steps))p.steps=p.steps.join('\n');if(Array.isArray(p.docs))p.docs=p.docs.join('\n');if(Array.isArray(p.ph))p.ph=p.ph.join('\n');return p}
 function miss(p){const m=[];if(!p.co)m.push('חברת ביטוח');if(!p.num)m.push('מספר פוליסה');if(!p.end)m.push('תוקף');if(!p.prem)m.push('פרמיה');if(!p.freq)m.push('תדירות');if(!p.cust)m.push('בעל פוליסה');return m}
 function needsCheck(p){return miss(p).length>0||dl(p.end)!==null&&dl(p.end)<=45}
 function monthlyStats(){let sum=0,unknown=0,known=0;for(const p of S.p){const m=monthlyPrem(p);if(m===null){if(p.prem)unknown++}else{sum+=m;if(p.prem)known++}}return{sum,unknown,known}}
@@ -162,6 +162,7 @@ function expiringSoon(){return S.p.filter(p=>{const n=dl(p.end);return n!==null&
 function closeSheet(){$('#sheet').classList.remove('open')}
 function nav(v){V=v;render()}
 function render(){
+  try{ if(typeof K!=='undefined'&&K&&S.p&&S.p.length&&!window._coverageBuilt){ const _b=autoBuildCoverage(); if(_b>0){ setTimeout(()=>{ try{ toast('נבנו פריטי כיסוי ל-'+_b+' פוליסות מהמסמכים השמורים'); }catch(e){} },800); } } }catch(e){}
   try{ if(typeof K!=='undefined'&&K&&S.p&&S.p.length&&!window._autoFixed){ const _f=autoFixStaleCards(); if(_f>0){ setTimeout(()=>{ try{ toast('תוקנו '+_f+' כרטיסים מנתוני המסמך השמור'); }catch(e){} },400); } } }catch(e){}const a=$('#app');window.scrollTo(0,0);if(K&&GATE){a.innerHTML=gateV();return}
 if(!K){a.innerHTML=lockV();return}
 let body='';if(V==='home')body=homeV();else if(V==='pol')body=polV();else if(V==='claims')body=claimsV();else if(V==='settings')body=settingsV();else if(V==='policy')body=policyV();else if(V==='claim')body=claimV();else if(V==='form')body=formV();else if(V==='family')body=familyV();else if(V==='coverage')body=coverageV();else if(V==='scan')body=scanV();else if(V==='assistant')body=assistantV();else if(V==='deep')body=deepAnalysisV();else if(V==='update')body=updateV();else if(V==='health')body=healthV();else if(V==='import')body=importV();else if(V==='backup')body=backupV();else body=homeV();
@@ -291,7 +292,7 @@ if(!S.settings.localOnly){
  if(ok){try{out.innerHTML='<div class="card">הטקסט חולץ. מנתח באמצעות AI… אם ספק אחד לא יגיב, תתבצע בדיקה מול ספק חלופי שהוגדר.</div>';aiFields=await aiExtractTyped(text,file.name);usedAI=true}catch(e){aiError=String(e.code||e.message||'שגיאת AI');toast('ניתוח AI נכשל: '+aiError.slice(0,90)+' — התוצאה המקומית תוצג לבדיקה')}}
 }
 const local=localExtract(text,coHit);
-const det=extractAyalonDeterministic(text); window._qcDet=det; const ai2=Object.assign({},aiFields||{}); if(det.fields.type&&det.fields.type.value) ai2.type=det.fields.type.value; const merged=mergeFields(local,ai2,det,text);
+const det=extractAyalonDeterministic(text); window._qcDet=det; const coverageItems=extractCoverageItems(text); window._qcCoverage=coverageItems; const ai2=Object.assign({},aiFields||{}); if(det.fields.type&&det.fields.type.value) ai2.type=det.fields.type.value; const merged=mergeFields(local,ai2,det,text);
 showQC(file.name,docType,pages,text,merged,usedAI,coHit,aiError,aiFields);}
 
 function nextScan(){SCAN_CUR++;processNextScan()}
@@ -426,6 +427,155 @@ function autoFixStaleCards(){
   return fixed;
 }
 
+/* ===== חילוץ כיסויים עמוק — פריטים עם סכום/הנחה/השתתפות/המתנה, עם ציטוט ועמוד =====
+   כלל ברזל: פריט מסומן found=true רק אם כינוי שלו מופיע במסמך מילה במילה.
+   שיננית לא מופיעה בתקנון מכבי — שם זה "הסרת אבן והדרכה להיגיינה אוראלית" — לכן החיפוש חייב מילים נרדפות. */
+const COVERAGE_CATALOG=[
+ {id:'anesthesia',label:'הרדמה כללית (שיניים)',cat:'שיניים',aliases:['הרדמה כללית','הרדמה','הרדמות']},
+ {id:'sedation',label:'סדציה',cat:'שיניים',aliases:['סדציה תוך ורידית','סדציה אורלית','סדציה נשאפת','סדציה']},
+ {id:'hygiene',label:'הסרת אבן / היגיינה אוראלית (שיננית)',cat:'שיניים',aliases:['הסרת אבן והדרכה להיגיינה אוראלית','הסרת אבן','היגיינה אוראלית','היגיינה','שיננית']},
+ {id:'dental_check',label:'בדיקה שנתית שיניים',cat:'שיניים',aliases:['בדיקה שנתית שיניים','בדיקה שנתית']},
+ {id:'dental_conservative',label:'רפואה משמרת (סתימות, טיפולי שורש, עקירות)',cat:'שיניים',aliases:['רפואה משמרת','סתימות','טיפולי שורש','עקירות']},
+ {id:'dental_gum',label:'טיפולי חניכיים',cat:'שיניים',aliases:['טיפולי חניכיים','פריודונטיה']},
+ {id:'dental_implant',label:'השתלת שתל / שיקום על שתלים',cat:'שיניים',aliases:['השתלת שתל','שיקום על שתלים','שתל מתכתי']},
+ {id:'dental_ortho',label:'טיפול אורתודנטי (יישור שיניים)',cat:'שיניים',aliases:['טיפול אורתודנטי','יישור שיניים','אורתודנטי']},
+ {id:'dental_prosthetic',label:'טיפול משקם / תותבות',cat:'שיניים',aliases:['טיפול משקם','תותבות קבועות','תותבות']},
+ {id:'dental_aesthetic',label:'טיפול אסתטי שיניים',cat:'שיניים',aliases:['טיפול אסתטי']},
+ {id:'drugs_list',label:'תרופות לפי רשימה (לא בסל)',cat:'תרופות',aliases:['תרופות שאינן בסל','תרופות לפי רשימה','תרופות וחיסונים']},
+ {id:'drugs_severe',label:'תרופות למחלה קשה / מחלה',cat:'תרופות',aliases:['תרופה למחלה קשה','תרופות למחלה קשה','תרופה למחלה']},
+ {id:'drugs_delivery',label:'משלוח תרופות עד הבית',cat:'תרופות',aliases:['משלוח תרופות']},
+ {id:'vaccines_travel',label:'חיסונים למטיילים',cat:'חיסונים',aliases:['חיסונים למטיילים','חיסונים']},
+ {id:'complementary',label:'רפואה משלימה',cat:'רפואה משלימה',aliases:['רפואה משלימה','מכבי טבעי']},
+ {id:'home_care',label:'טיפולים בבית',cat:'טיפולים בבית',aliases:['טיפולים בבית','טיפולי פיזיותרפיה']},
+ {id:'water',label:'נזקי מים',cat:'דירה',aliases:['נזקי מים','נזק מים']},
+ {id:'earthquake',label:'רעידת אדמה',cat:'דירה',aliases:['רעידת אדמה']},
+ {id:'burglary',label:'פריצה וגניבה',cat:'דירה',aliases:['פריצה וגניבה','פריצה','גניבה']},
+ {id:'third_party',label:'חבות כלפי צד שלישי',cat:'חבות',aliases:['חבות כלפי צד שלישי','צד שלישי','צד ג']},
+ {id:'employer',label:'חבות מעבידים',cat:'חבות',aliases:['חבות מעבידים']}
+];
+function coveragePageAt(flat, pos){
+  let page=''; const re=/\[\[עמוד (\d+)\]\]/g; let m;
+  while((m=re.exec(flat))!==null){ if(m.index<=pos) page=m[1]; else break; }
+  return page;
+}
+function extractCoverageFields(win, anchor){
+  anchor=(anchor==null?Math.floor(String(win||'').length/2):anchor);
+  const closest=(re)=>{
+    let best=null; const g=new RegExp(re.source,'g'); let m;
+    while((m=g.exec(win))!==null){ const dist=Math.abs(m.index-anchor); if(!best||dist<best.dist) best={m:m,dist:dist}; if(m[0].length===0) g.lastIndex++; }
+    return best?best.m:null;
+  };
+  const out={};
+  // Discount: closest % after "הנחה" OR closest "ללא תשלום" — whichever is nearer the alias
+  let disc=null, discDist=1e9;
+  const dm=closest(/הנחה[^%]{0,50}?(\d{1,3})%/);
+  if(dm){ disc=dm[1]+'%'; discDist=Math.abs(dm.index-anchor); }
+  const freeM=closest(/ללא תשלום/);
+  if(freeM && Math.abs(freeM.index-anchor)<discDist){ disc='100% (ללא תשלום)'; }
+  if(disc) out.discount=disc;
+  let cp=closest(/השתתפות עצמית[^₪]{0,40}?([\d,]+\.\d{2}|[\d,]+)\s*\.?\s*₪/)||closest(/בהשתתפות עצמית של\s*([\d,]+\.\d{2}|[\d,]+)\s*\.?\s*₪/);
+  if(cp) out.copay=cp[1]+' ₪';
+  if(closest(/לא יחויב בכל השתתפות עצמית/)) out.copay='0 ₪';
+  let ce=closest(/תקרה של\s*([\d,]+\.?\d*)\s*\.?\s*₪/);
+  if(ce) out.ceiling=ce[1]+' ₪';
+  // Waiting: only AFTER the alias (waiting is stated in a later subsection; a "ללא" before it belongs to another benefit)
+  let wAfter=null, wDist=1e9;
+  { const g=/(ללא תקופת המתנה|תקופת המתנה\s*[-–—]?\s*(\d+)\s*חודשים)/g; let m;
+    while((m=g.exec(win))!==null){ if(m.index>anchor){ const dist=m.index-anchor; if(dist<wDist){ wDist=dist; wAfter=m; } } } }
+  if(wAfter){ out.waiting=wAfter[2]?wAfter[2]+' חודשים':'ללא'; }
+  let fr=closest(/פעם (אחת|אחד|פעמיים)[\s.]*בשנה/)||closest(/(\d+)\s*טיפולים[^.]{0,40}בשנה/);
+  if(fr) out.frequency=fr[0].replace(/\s+/g,' ').trim();
+  let ag=closest(/גילאי\s*(\d+)\s*[-–]\s*(\d+)/);
+  if(ag) out.ages=ag[1]+'-'+ag[2];
+  const conds=[];
+  if(/על פי רשימה/.test(win)) conds.push('על פי רשימה');
+  if(/במרפאות שבהסכם/.test(win)||/במרפאות השיניים הקשורות בהסכם/.test(win)) conds.push('במרפאות שבהסכם');
+  if(/בבית מרקחת בהסכם/.test(win)) conds.push('בבית מרקחת בהסכם');
+  if(conds.length) out.conditions=conds.join(', ');
+  return out;
+}
+function extractCoverageItems(text){
+  const flat=String(text||'').replace(/\s+/g,' ');
+  const items=[];
+  for(const cat of COVERAGE_CATALOG){
+    const hits=[];
+    for(const alias of cat.aliases){
+      let from=0;
+      while(true){
+        const pos=flat.indexOf(alias, from); if(pos<0) break; from=pos+alias.length;
+        const win=flat.slice(Math.max(0,pos-600), pos+600);
+        const fields=extractCoverageFields(win, Math.min(600,pos));
+        hits.push({alias,pos,fields,win});
+      }
+    }
+    if(hits.length){
+      // Prefer the most specific (longest) alias; among those, the earliest occurrence that has fields (the main definition, not a later tier/reference).
+      const maxLen=Math.max(...hits.map(x=>x.alias.length));
+      let cand=hits.filter(x=>x.alias.length===maxLen);
+      const withFields=cand.filter(x=>Object.keys(x.fields).length>0);
+      if(withFields.length) cand=withFields;
+      cand.sort((a,b)=>a.pos-b.pos || Object.keys(b.fields).length-Object.keys(a.fields).length);
+      const best=cand[0];
+      const quote=flat.slice(Math.max(0,best.pos-200), best.pos+400).trim();
+      items.push({id:cat.id,label:cat.label,cat:cat.cat,found:true,alias:best.alias,discount:best.fields.discount||'',copay:best.fields.copay||'',ceiling:best.fields.ceiling||'',waiting:best.fields.waiting||'',frequency:best.fields.frequency||'',ages:best.fields.ages||'',conditions:best.fields.conditions||'',quote:quote,page:coveragePageAt(flat,best.pos)});
+    } else {
+      items.push({id:cat.id,label:cat.label,cat:cat.cat,found:false,alias:'',discount:'',copay:'',ceiling:'',waiting:'',frequency:'',ages:'',conditions:'',quote:'',page:''});
+    }
+  }
+  return items;
+}
+function normalizeCoverageQuery(q){
+  let s=String(q||'').trim().replace(/[?!.]+$/,'').trim();
+  s=s.replace(/^יש לי כיסוי (ל|ל-)?/,'').replace(/^האם יש (לי )?כיסוי (ל|ל-)?/,'').replace(/^כיסוי (ל|ל-)?/,'').replace(/^יש כיסוי (ל|ל-)?/,'').trim();
+  const cands=[s];
+  if(s.startsWith('ל')&&s.length>1) cands.push(s.slice(1));
+  if(s.startsWith('ל-')) cands.push(s.slice(2));
+  return cands;
+}
+function searchCoverage(q){
+  const cands=normalizeCoverageQuery(q);
+  const matched=COVERAGE_CATALOG.filter(c=>cands.some(x=>x&& (c.label.includes(x)||c.aliases.some(a=>a.includes(x)||x.includes(a)))));
+  const out={query:q,cands,items:[],textHits:[]};
+  if(matched.length){
+    for(const cat of matched){
+      const hits=[];
+      for(const p of (S.p||[])){
+        const ci=(p.coverageItems||[]).find(x=>x.id===cat.id&&x.found);
+        if(ci) hits.push({policy:p,item:ci});
+      }
+      out.items.push({cat,hits});
+    }
+    return out;
+  }
+  // Fallback: full-text search in stored raw/full
+  const needle=cands[0]||'';
+  if(needle){
+    for(const p of (S.p||[])){
+      const txt=String(p.raw||'')+' '+String(p.full||'');
+      if(txt.includes(needle)){
+        const lines=txt.split(/\n+/).map(x=>x.trim()).filter(x=>x.includes(needle)&&x.length>3&&x.length<300);
+        if(lines.length) out.textHits.push({policy:p,lines:lines.slice(0,5)});
+      }
+    }
+  }
+  return out;
+}
+function autoBuildCoverage(){
+  if(typeof K==='undefined'||!K) return 0;
+  if(!S.p||!S.p.length) return 0;
+  if(window._coverageBuilt) return 0;
+  window._coverageBuilt=true;
+  let built=0;
+  for(const p of (S.p||[])){
+    const raw=String(p.raw||'')||String(p.full||'');
+    if(!raw) continue;
+    if(p.coverageItems&&p.coverageItems.length) continue;
+    try{ p.coverageItems=extractCoverageItems(raw); built++; }catch(e){ console.warn('coverage build failed', p.id, e); }
+  }
+  if(built){ try{ saveQuiet(); }catch(e){} }
+  return built;
+}
+
 function localExtract(text,coHit){
  const raw=String(text||'');const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
  const find=re=>{const m=raw.match(re);return m?String(m[1]).trim():''};
@@ -479,6 +629,7 @@ out.innerHTML=`<div class="card"><h3>בקרת איכות — ${esc(fileName)}</h
 ${aiError?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">ניתוח ה-AI לא הושלם</b><div class="mut" style="margin-top:5px">${esc(aiError)}</div><div class="mut">הנתונים שלהלן מבוססים על חילוץ מקומי בלבד. אין לראות בהם ניתוח AI.</div></div>`:''}
 ${warns.length?`<div style="background:#fff3cd;border-radius:12px;padding:12px;margin:10px 0"><b style="color:#856404">ה-AI הציע נתונים שלא קיימים במסמך — הם נזרקו ונלקח הערך מהמסמך</b><ul style="margin:6px 0;padding-inline-start:18px">${warns.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''} ${flags.length?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">דגלים אדומים</b><ul style="margin:6px 0;padding-inline-start:18px">${flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
 <table class="table"><tr><th>שדה</th><th>תוצאה</th><th>מצב</th></tr>${fields.map((f,i)=>`<tr><td>${esc(f.label)}</td><td><input id="qc-${i}" value="${esc(f.value)}" style="margin:0"></td><td><span class="${f.status==='explicit'?'qc-ok':f.status==='inferred'?'qc-mid':'qc-bad'}">${f.status==='explicit'?'מפורש':f.status==='inferred'?'הוסק':'חסר'}</span> ${f.conf?f.conf+'%':''} ${f.page?'(עמ׳ '+f.page+')':''}</td></tr>`).join('')}</table>
+<div class="card" style="margin-top:12px"><h3>כיסויים שזוהו במסמך (חילוץ עמוק — עם ציטוט)</h3><div class="mut">כל שורה מגובה בציטוט מהמסמך. פריט שלא נמצא בו מסומן "לא נמצא" — לא הומצא.</div><table class="table"><tr><th>כיסוי</th><th>הנחה / סכום</th><th>השתתפות עצמית</th><th>המתנה</th><th>ציטוט מהמסמך</th></tr>${(window._qcCoverage||[]).filter(x=>x.found).map(x=>`<tr><td>${esc(x.label)}</td><td>${esc([x.discount,x.ceiling,x.frequency,x.ages].filter(Boolean).join(' · ')||'—')}</td><td>${esc(x.copay||'—')}</td><td>${esc(x.waiting||'—')}</td><td style="font-size:12px">${esc(x.quote.slice(0,180))}${x.page?' (עמ׳ '+x.page+')':''}</td></tr>`).join('')||'<tr><td colspan="5">לא זוהו פריטי כיסוי מהקטלוג במסמך זה.</td></tr>'}</table></div>
 <label>סוג ביטוח</label><select id="qc-type">${Object.keys(TYPES).map(t=>`<option ${((aiFields&&aiFields.type)||classifyPolicyType(text,'').type)===t?'selected':''}>${t}</option>`).join('')}</select>
 <label>כיסויים (שורה לכל כיסוי)</label><textarea id="qc-cov" rows="4">${esc(aiFields?.cov||'')}</textarea>
 <label>חריגים</label><textarea id="qc-ex" rows="3">${esc(aiFields?.ex||'')}</textarea>
@@ -496,7 +647,7 @@ window._qcFields=fields;window._qcText=text}
 
 async function saveQC(n,docType){const f={};window._qcFields.forEach((fld,i)=>{f[fld.key]=document.getElementById('qc-'+i).value.trim()});
 const q=window._qcFields.map(fld=>({label:fld.label,value:document.getElementById('qc-'+window._qcFields.indexOf(fld)).value.trim(),status:fld.status,conf:fld.conf,page:fld.page}));
-const val=id=>document.getElementById(id)?.value||'';const p=normalizePolicy({type:val('qc-type'),co:f.co,num:f.num,start:f.start,end:f.end,prem:f.prem,freq:f.freq,ded:f.ded,asset:f.asset,cust:f.cust,ins:f.ins,prod:f.prod,cl:f.cl,cov:val('qc-cov'),ex:val('qc-ex'),who:val('qc-who'),notice:val('qc-notice'),steps:val('qc-steps'),docs:val('qc-docs'),ph:val('qc-ph'),note:val('qc-note'),full:val('qc-full'),docType,quality:q,raw:window._qcText.slice(0,30000),chapters:(window._qcDet&&window._qcDet.chapters)||null,deductibles:(window._qcDet&&window._qcDet.deductibles)||null,specials:(window._qcDet&&window._qcDet.specials)||null,docStatusText:(window._qcDet&&window._qcDet.fields.docStatusText?window._qcDet.fields.docStatusText.value:''),buildingYear:(window._qcDet&&window._qcDet.fields.buildingYear?window._qcDet.fields.buildingYear.value:''),numApartments:(window._qcDet&&window._qcDet.fields.numApartments?window._qcDet.fields.numApartments.value:''),vaadRep:(window._qcDet&&window._qcDet.fields.vaadRep?window._qcDet.fields.vaadRep.value:''),agn:(window._qcDet&&window._qcDet.fields.agn?window._qcDet.fields.agn.value:'')});
+const val=id=>document.getElementById(id)?.value||'';const p=normalizePolicy({type:val('qc-type'),co:f.co,num:f.num,start:f.start,end:f.end,prem:f.prem,freq:f.freq,ded:f.ded,asset:f.asset,cust:f.cust,ins:f.ins,prod:f.prod,cl:f.cl,cov:val('qc-cov'),ex:val('qc-ex'),who:val('qc-who'),notice:val('qc-notice'),steps:val('qc-steps'),docs:val('qc-docs'),ph:val('qc-ph'),note:val('qc-note'),full:val('qc-full'),docType,quality:q,raw:window._qcText.slice(0,30000),chapters:(window._qcDet&&window._qcDet.chapters)||null,deductibles:(window._qcDet&&window._qcDet.deductibles)||null,specials:(window._qcDet&&window._qcDet.specials)||null,docStatusText:(window._qcDet&&window._qcDet.fields.docStatusText?window._qcDet.fields.docStatusText.value:''),buildingYear:(window._qcDet&&window._qcDet.fields.buildingYear?window._qcDet.fields.buildingYear.value:''),numApartments:(window._qcDet&&window._qcDet.fields.numApartments?window._qcDet.fields.numApartments.value:''),vaadRep:(window._qcDet&&window._qcDet.fields.vaadRep?window._qcDet.fields.vaadRep.value:''),agn:(window._qcDet&&window._qcDet.fields.agn?window._qcDet.fields.agn.value:''),coverageItems:window._qcCoverage||null});
 S.p.unshift(p);logHist('סריקת פוליסה',p.co+' · '+p.num);const ok=await saveQuiet();if(!ok)return;toast('הפוליסה נשמרה');nextScan()}
 async function extractPdfAll(file){
 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
@@ -536,9 +687,36 @@ async function addPerson(){const n=$('#p-name').value.trim(),r=$('#p-role').valu
 async function delPerson(id){S.family.people=S.family.people.filter(x=>x.id!==id);await saveQuiet();render()}
 async function addAsset(){const k=$('#a-kind').value,l=$('#a-label').value.trim(),i=$('#a-id').value.trim();if(!l)return toast('חסר שם נכס');S.family.assets.push({id:uid(),kind:k,label:l,identifier:i});await saveQuiet();render()}
 async function delAsset(id){S.family.assets=S.family.assets.filter(x=>x.id!==id);await saveQuiet();render()}
-function coverageV(){const st=monthlyStats();const types=Object.keys(TYPES);
+function searchCoverageUI(){
+  const q=document.getElementById('cov-q')?.value||'';
+  const out=document.getElementById('cov-res');
+  if(!out) return;
+  if(!q.trim()){ out.innerHTML='<div class="mut">כתוב מה לחפש — לדוגמה: שיננית, הרדמה, תרופות.</div>'; return; }
+  const r=searchCoverage(q);
+  let html='';
+  if(r.items.length){
+    for(const it of r.items){
+      if(!it.hits.length){ html+=`<div class="card" style="margin-top:8px"><b>${esc(it.cat.label)}</b> — <span class="qc-bad">לא נמצא כיסוי כזה במסמכים השמורים.</span><div class="mut">לא הוכח שאין כיסוי — רק שלא נמצא אזכור שלו במסמכים שנסרקו. בדוק את המסמך המלא או סרוק פוליסה נוספת.</div></div>`; continue; }
+      html+=`<div class="card" style="margin-top:8px"><b>${esc(it.cat.label)}</b> — נמצא ב-${it.hits.length} פוליסות:</div>`;
+      for(const hit of it.hits){
+        const ci=hit.item, p=hit.policy;
+        html+=`<div class="card" style="margin-top:6px"><b>${esc(p.co||'')} · ${esc(p.type||'')} · ${esc(p.num||'ללא מס׳')}</b>${p.docType?` <span class="mut">(${esc(p.docType)})</span>`:''}<div class="kv"><span>הנחה / תקרה</span><b>${esc([ci.discount,ci.ceiling].filter(Boolean).join(' · ')||'—')}</b></div><div class="kv"><span>השתתפות עצמית</span><b>${esc(ci.copay||'—')}</b></div><div class="kv"><span>תקופת המתנה</span><b>${esc(ci.waiting||'—')}</b></div><div class="kv"><span>תדירות / גילאים</span><b>${esc([ci.frequency,ci.ages].filter(Boolean).join(' · ')||'—')}</b></div>${ci.conditions?`<div class="kv"><span>תנאים</span><b>${esc(ci.conditions)}</b></div>`:''}<div class="mut" style="margin-top:6px">ציטוט מהמסמך${ci.page?' (עמ׳ '+ci.page+')':''}: "${esc(ci.quote.slice(0,320))}"</div></div>`;
+      }
+    }
+  } else if(r.textHits.length){
+    html+='<div class="mut">לא נמצא פריט כיסוי מוגדר — אבל נמצא אזכור בטקסט:</div>';
+    for(const th of r.textHits){
+      html+=`<div class="card" style="margin-top:6px"><b>${esc(th.policy.co||'')} · ${esc(th.policy.type||'')}</b><ul>${th.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div>`;
+    }
+  } else {
+    html+=`<div class="card" style="margin-top:8px"><b>לא נמצא אזכור ל-"${esc(q)}" במסמכים השמורים.</b><div class="mut">לא הוכח שאין כיסוי — רק שלא נמצא אזכור. אם יש לך פוליסה שלא נסרקה (למשל ביטוח בריאות / שיניים), סרוק אותה והחיפוש יכלול אותה.</div></div>`;
+  }
+  out.innerHTML=html;
+}
+function coverageV(){
+const _covSearchCard=`<div class="card"><h3>חיפוש כיסוי — "יש לי כיסוי ל...?"</h3><div class="mut">חפש פריט כיסוי ספציפי: הרדמה, שיננית, תרופות, חיסונים, רפואה משלימה, נזקי מים ועוד. התוצאה מגובה בציטוט מהמסמך, עם הנחה / השתתפות / המתנה.</div><div class="row"><input id="cov-q" placeholder="לדוגמה: שיננית, הרדמה, תרופות" style="flex:1" onkeydown="if(event.key==='Enter')searchCoverageUI()"><button class="btn" onclick="searchCoverageUI()">חפש כיסוי</button></div><div id="cov-res" style="margin-top:10px"></div><div class="mut" style="margin-top:8px">טיפ: "שיננית" תמצא את "הסרת אבן והדרכה להיגיינה אוראלית" — כך זה כתוב בתקנון מכבי.</div></div>`; const st=monthlyStats();const types=Object.keys(TYPES);
 const rows=types.map(t=>{const ps=S.p.filter(p=>p.type===t);const m=ps.reduce((a,p)=>a+(monthlyPrem(p)||0),0);return `<tr><td>${TYPES[t]} ${t}</td><td>${ps.length?ps.length+' פוליסות':'<span class="qc-bad">לא זוהה כיסוי</span>'}</td><td>${ps.length?'₪'+Math.round(m)+' / חודש':'—'}</td><td>${ps.length?ps.map(p=>esc(p.co)).join(', '):'<span class="mut">לא הוכח שאין כיסוי — רק שלא זוהה במסמכים שנשמרו</span>'}</td></tr>`}).join('');
-return `<div class="card"><h3>מפת כיסויים ופערים</h3><div class="mut">הבחנה חשובה: “לא זוהה” אינו הוכחה שאין כיסוי. הוא אומר שלא נמצאה פוליסה כזו בכספת.</div><table class="table"><tr><th>סוג</th><th>כיסוי</th><th>עלות</th><th>חברות</th></tr>${rows}</table></div>
+return _covSearchCard+`<div class="card"><h3>מפת כיסויים ופערים</h3><div class="mut">הבחנה חשובה: “לא זוהה” אינו הוכחה שאין כיסוי. הוא אומר שלא נמצאה פוליסה כזו בכספת.</div><table class="table"><tr><th>סוג</th><th>כיסוי</th><th>עלות</th><th>חברות</th></tr>${rows}</table></div>
 <div class="card"><h3>הוצאות</h3><div class="mut">סה״כ חודשי מחושב: ₪${Math.round(st.sum)} · ${st.unknown} פוליסות ללא תדירות מאומתת לא נכללו.</div>${S.p.map(p=>{const m=monthlyPrem(p);return `<div class="kv"><span>${esc(p.co)} · ${esc(p.type)}</span><b>${m!==null?'₪'+Math.round(m)+' / חודש':'תדירות לא ידועה'}</b></div>`}).join('')}</div>
 <div class="card"><h3>חפיפות אפשריות</h3><div class="mut">${dupHints()}</div></div>
 <button class="btn o" onclick="familyReport()">הפק דוח משפחתי (הדפסה / PDF)</button>`}
@@ -616,12 +794,12 @@ function settingsV(){return `<div class="card"><h3>גרסה ועדכון</h3><di
 <div class="small">כאשר מצב מקומי בלבד פעיל, סריקת AI וספריות PDF/OCR חיצוניות חסומות. ייבוא טקסט שהודבק עדיין עובד.</div></div>
 <div class="card"><h3>הגדרות AI</h3><label>ספק ברירת מחדל</label><select id="aiProv" onchange="setProv(this.value)">${['gemini','groq','claude'].map(x=>`<option ${S.settings.aiProvider===x?'selected':''}>${x}</option>`).join('')}</select>
 <label>מפתח ${S.settings.aiProvider}</label><input id="aiKey" type="password" placeholder="הדבק מפתח — נשמר מוצפן בכספת" value="${esc(S.settings.aiKeys[S.settings.aiProvider]||'')}"><button class="btn" onclick="saveKey()">שמור מפתח</button>
-<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div></div>
+<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div><div class="mut" style="margin-top:6px">מפתחות מוגדרים: ${['gemini','groq','claude'].map(p=>p+': '+(S.settings.aiKeys[p]?'✓':'✗')).join(' · ')}</div><div class="row" style="margin-top:8px"><button class="btn o" onclick="testAI()">בדוק חיבור AI</button></div><div id="aiTestRes" class="mut" style="margin-top:6px"></div><div class="mut" style="margin-top:4px">אם המפתח שלך מתחיל ב־gsk_ הוא מפתח Groq — האפליקציה תזהה אותו אוטומטית ותשמור אותו תחת Groq, גם אם התפריט היה על ספק אחר.</div></div>
 <div class="card"><h3>נתונים</h3><button class="btn" onclick="nav('backup')">גיבוי ושחזור</button><button class="btn o" onclick="nav('import')">ייבוא פוליסה מ־Claude (הדבק)</button><button class="btn o" onclick="exportJSON()">ייצוא JSON (כל השדות — כולל תדירות)</button><button class="btn o" onclick="nav('family')">תיק משפחתי</button><button class="btn o" onclick="nav('coverage')">מפת כיסויים</button></div>
 <div class="card"><h3>אודות</h3><div class="mut">גרסה ${BUILD} · קובץ HTML יחיד · ללא שרת · IndexedDB + AES-GCM · PBKDF2 300,000 איטרציות</div><div class="mut" style="margin-top:6px">המידע באפליקציה אינו חוות דעת ביטוחית או משפטית. ההחלטה הסופית תמיד בידי המבטח.</div></div>`}
 async function setAutoLock(v){S.settings.autoLockMin=Number(v);await saveQuiet();toast('נשמר')}
 async function setProv(v){S.settings.aiProvider=v;await saveQuiet();render()}
-async function saveKey(){const k=$('#aiKey').value.trim();S.settings.aiKeys[S.settings.aiProvider]=k;await saveQuiet();toast('מפתח נשמר מוצפן')}
+async function saveKey(){const k=$('#aiKey').value.trim();const det=detectKeyProvider(k);let target=S.settings.aiProvider;if(det&&det!==target){target=det;S.settings.aiProvider=det}if(!k){delete S.settings.aiKeys[target];await saveQuiet();render();toast('מפתח נמחק');return}S.settings.aiKeys[target]=k;await saveQuiet();render();toast(det&&det!==S.settings.aiProvider?'מפתח נשמר מוצפן':(det?'זוהה מפתח '+det+' — נשמר תחת '+det+' (לא תחת הספק הקודם)':'מפתח נשמר מוצפן'))}
 function backupV(){return `<div class="card"><h3>גיבוי</h3><div class="mut">הגיבוי הוא העתק מוצפן של הכספת. הוא אינו מכיל את הסיסמה. שמור אותו במקום בטוח.</div><div class="mut">גיבוי אחרון: ${S.bk?new Date(S.bk).toLocaleString('he-IL'):'עדיין לא גובה'}</div><button class="btn" onclick="doBackup()">צור גיבוי ושמור / שתף</button></div>
 <div class="card"><h3>שחזור — עם הגנה</h3><div class="mut">לפני שחזור ניצור אוטומטית גיבוי של הכספת הנוכחית, ונבדוק שהגיבוי החדש תקין ותואם לסיסמה שלך. אם הבדיקה נכשלת — שום דבר לא יוחלף.</div><input id="rsf" type="file" accept=".txt,.json" onchange="loadRestoreFile(this)"><textarea id="rs" rows="5" placeholder="או הדבק כאן את תוכן הגיבוי"></textarea><button class="btn red" onclick="doRestore()">שחזר — לאחר בדיקה</button><div class="small">הגיבוי האוטומטי לפני שחזור נשמר גם במכשיר תחת “auto-backup-before-restore”.</div></div>
 <button class="btn o" onclick="nav('settings')">חזרה להגדרות</button>`}
@@ -647,6 +825,46 @@ async function askAI(){const q=$('#evt').value.trim();if(!q)return toast('כתו
 if(!confirm(`לשלוח שאלה ל־AI (${S.settings.aiProvider})? השאלה תכלול תקצירי פוליסות בלבד, לא מסמכים מלאים.`))return;const out=$('#evr');out.textContent='שואל את ה־AI…';try{const ctx=S.p.map(p=>({id:p.id,co:p.co,type:p.type,num:p.num,asset:p.asset,end:p.end,cov:(p.cov||'').slice(0,1200),ex:(p.ex||'').slice(0,600)}));const ans=await AI(`ענה בעברית על השאלה: ${q}\nפוליסות:\n${JSON.stringify(ctx,null,1)}\nהחזר JSON: {verdict, summary, matches:[{id,v,why,steps:[]}], urgent, missing}. אל תמציא. אם לא ברור כתוב לא ברור.`);const o=JSON.parse(ans.match(/\{[\s\S]*\}/)[0]);out.innerHTML=`<div class="card"><b>${esc(o.verdict||'לא ברור')}</b><div>${esc(o.summary||'')}</div>${(o.matches||[]).map(m=>{const p=P(m.id);return p?`<div style="margin-top:10px"><b>${esc(m.v)} · ${esc(p.co)} · ${esc(p.type)}</b><div class="mut">${esc(m.why||'')}</div><div class="mut">${(m.steps||[]).join(' · ')}</div><button class="btn sm" onclick="openPolicy('${p.id}')">פתח פוליסה</button></div>`:''}).join('')}<div class="mut" style="margin-top:8px">ניתוח אוטומטי בלבד. ההחלטה הסופית בידי המבטח.</div></div>`}catch(e){out.textContent='החיפוש נכשל ('+String(e.code||e.message||'שגיאה')+')'}}
 async function claimDoc(id){const c=S.claims.find(x=>x.id===id);if(!c)return;if(S.settings.localOnly)return toast('במצב מקומי בלבד AI חסום.');if(!confirm(`לשלוח את פרטי האירוע ל־AI (${S.settings.aiProvider}) לצורך ניסוח כתב תביעה?`))return;const out=$('#claimDocOut');out.textContent='כותב…';try{const txt=await AI(`כתוב כתב תביעה רשמי בעברית לחברת ביטוח. אירוע: ${c.title} בתאריך ${c.date}. תיאור: ${c.note}. פוליסות: ${JSON.stringify((c.policyIds||[]).map(i=>P(i)).filter(Boolean).map(p=>({co:p.co,type:p.type,num:p.num})))}. מבנה: נושא, פנייה, פרטי פוליסה, תיאור, כיסויים רלוונטיים, בקשה לפתיחת תביעה ורשימת מסמכים. אל תמציא עובדות. כתוב טקסט רגיל בלבד.`);out.innerHTML=`<textarea rows="14" style="margin-top:10px">${esc(txt)}</textarea><button class="btn" onclick="cp(document.querySelector('#claimDocOut textarea').value)">העתק כתב תביעה</button>`}catch(e){out.textContent='ההפקה נכשלה'}}
 async function fetchWithTimeout(url,options={},timeoutMs=65000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal})}catch(e){if(e.name==='AbortError')throw{code:'פסק זמן: ספק ה-AI לא השיב בתוך 65 שניות'};throw{code:'שגיאת רשת: '+(e.message||'אין תגובה מהשרת')}}finally{clearTimeout(timer)}}
+function detectKeyProvider(key){
+  const k=String(key||'').trim();
+  if(k.startsWith('gsk_')) return 'groq';
+  if(k.startsWith('sk-ant-')) return 'claude';
+  if(k.startsWith('AIza')) return 'gemini';
+  return null;
+}
+function parseAIJson(raw){
+  let s=String(raw||'').trim();
+  s=s.replace(/```(?:json)?/gi,'').trim();
+  const m=s.match(/\{[\s\S]*\}/);
+  if(!m) throw new Error('תשובת AI לא תקינה — לא נמצא JSON');
+  let cand=m[0];
+  try{ return JSON.parse(cand); }catch(e){}
+  // Repair truncated JSON: cut to last complete closing brace, then balance
+  let cut=cand;
+  const lastClose=Math.max(cut.lastIndexOf('}'), cut.lastIndexOf(']'));
+  if(lastClose>0) cut=cut.slice(0,lastClose+1);
+  // Balance open braces/brackets
+  let depth=0, inStr=false, esc=false, stack=[];
+  for(let i=0;i<cut.length;i++){ const ch=cut[i]; if(inStr){ if(esc) esc=false; else if(ch==='\\') esc=true; else if(ch==='"') inStr=false; } else { if(ch==='"') inStr=true; else if(ch==='{'||ch==='[') stack.push(ch); else if(ch==='}'){ if(stack[stack.length-1]==='{') stack.pop(); } else if(ch===']'){ if(stack[stack.length-1]==='[') stack.pop(); } } }
+  let repaired=cut;
+  while(stack.length){ const o=stack.pop(); repaired+= (o==='{')?'}':']'; }
+  try{ return JSON.parse(repaired); }catch(e2){ throw new Error('תשובת AI לא תקינה — JSON לא ניתן לפענוח'); }
+}
+async function testAI(){
+  const out=document.getElementById('aiTestRes');
+  if(out) out.textContent='בודק חיבור AI…';
+  try{
+    const raw=await AI('החזר JSON בלבד: {"ok":true}');
+    const j=parseAIJson(raw);
+    if(out) out.innerHTML='<b style="color:var(--green)">ה־AI עובד ✓</b><div class="mut">התקבלה תשובה תקינה מהספק המוגדר. אם סריקה עדיין נכשלת, הבעיה היא במסמך הספציפי, לא בחיבור.</div>';
+    toast('חיבור AI תקין');
+    return true;
+  }catch(e){
+    const msg=String(e.code||e.message||'שגיאה');
+    if(out) out.innerHTML='<b style="color:var(--red)">ה־AI לא עובד</b><div class="mut">'+esc(msg)+'</div><div class="mut" style="margin-top:6px">אם כתוב "לא הוגדר מפתח" — הדבק מפתח בהגדרות. אם כתוב "Invalid API Key" — המפתח בוטל/שגוי, צור מפתח חדש והדבק אותו.</div>';
+    return false;
+  }
+}
 async function aiRequest(prov,key,prompt){
  const headers={'Content-Type':'application/json'};
  if(prov==='gemini'){
@@ -662,9 +880,9 @@ async function aiRequest(prov,key,prompt){
   // Use currently listed production GPT-OSS models and strict JSON mode.
   const models=['openai/gpt-oss-120b','openai/gpt-oss-20b'];let last='';
   for(const model of models){try{
-   const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0,reasoning_effort:'low',max_completion_tokens:1500,response_format:{type:'json_object'}})});
+   const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0,reasoning_effort:'low',max_completion_tokens:4000,response_format:{type:'json_object'}})});
    const j=await r.json().catch(()=>({}));
-   if(!r.ok){last='Groq '+model+': '+(j.error?.message||r.status);if(r.status===429){await new Promise(r2=>setTimeout(r2,2500));continue} if([400,404,422].includes(r.status))continue;throw{code:last}}
+   if(!r.ok){last='Groq '+model+': '+(j.error?.message||r.status);if(r.status===429){await new Promise(r2=>setTimeout(r2,8000));continue} if([400,401,404,422].includes(r.status))continue;throw{code:last}}
    const a=j.choices?.[0]?.message?.content||'';if(a.trim())return a;last='Groq '+model+' החזיר תשובה ריקה';
   }catch(e){last=String(e.code||e.message||e);if(/פסק זמן/.test(last))break}}
   throw{code:last||'Groq לא החזיר תשובה'}
@@ -685,7 +903,7 @@ async function AI(prompt){
 function _estTokens(t){return Math.ceil(String(t||'').length/3.2)}
 function _splitByPages(text){const parts=String(text||'').split(/(?=\[\[עמוד \d+\]\])/g);return parts.filter(x=>x.trim())}
 function _selectRelevantPages(text,maxChars){const pages=_splitByPages(text);if(!pages.length)return String(text||'').slice(0,6000);const kw=['פרמיה','השתתפות עצמית','פוליסה','מספר פוליסה','מבוטח','תקופת הביטוח','תוקף','כיסוי','חריג','חברת ביטוח','דמי ביטוח','סכום ביטוח','מוקד','תביעות'];const scored=pages.map(pg=>({pg,sc:kw.reduce((a,k)=>a+(pg.includes(k)?1:0),0)+(pg.length>200?1:0)}));scored.sort((a,b)=>b.sc-a.sc);let out='',used=new Set();for(const s of scored){if(out.length+s.pg.length>maxChars)break;out+=s.pg+'\n';used.add(s.pg)} if(out.length<1000){for(const pg of pages){if(out.length+pg.length>maxChars)break;if(!used.has(pg))out+=pg+'\n'}} return out.slice(0,maxChars)}
-async function aiExtractTyped(text,fileName){const c=classifyPolicyType(text,'');const isVaad=/ועד בית|בית משותף/.test(text);const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';const sel=_selectRelevantPages(text,7000);const prompt=base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). מסמך:\n'+sel;try{const raw=await AI(prompt);const m=raw.match(/\{[\s\S]*\}/);if(!m)throw new Error('תשובת AI לא תקינה');const j=JSON.parse(m[0]);if(!j.type||j.type==='רכב'){const c2=classifyPolicyType(text,j.prod||'');if(c2.conf>=60)j.type=c2.type;else if(!j.type)j.type='אחר'} return j}catch(e){throw e}}
+async function aiExtractTyped(text,fileName){const c=classifyPolicyType(text,'');const isVaad=/ועד בית|בית משותף/.test(text);const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';const sel=_selectRelevantPages(text,7000);const prompt=base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). מסמך:\n'+sel;try{const raw=await AI(prompt);const j=parseAIJson(raw);if(!j.type||j.type==='רכב'){const c2=classifyPolicyType(text,j.prod||'');if(c2.conf>=60)j.type=c2.type;else if(!j.type)j.type='אחר'} return j}catch(e){throw e}}
 function askLocal(q){const res=lsearch(q,S.p||[]);return res.map(r=>({id:r.p.id,co:r.p.co,type:r.p.type,num:r.p.num,score:r.sc,snippets:r.s}))}
 try{if(typeof INSURANCE_KB!=='undefined'){INSURANCE_KB.version='9.0';INSURANCE_KB.principles=INSURANCE_KB.principles||[];const _extra=[['ביטוח חובה לרכב','כיסוי חובה לנזקי גוף בלבד. לא מכסה נזק לרכב עצמו ולא רכוש צד ג.'],['ביטוח מקיף','כיסוי לנזק לרכב המבוטח לפי תנאים: תאונה, גניבה, שריפה, נזקי טבע. בדוק השתתפות, מוסך הסדר, ירידת ערך.'],['ביטוח צד ג לרכב','כיסוי לנזק רכוש/גוף לצד שלישי עד גבול אחריות. לא מכסה את הרכב המבוטח.'],['ביטוח דירה - מבנה','עלות הקמה מחדש, לא שווי שוק. בדוק שטח, הצמדה, ערך כינון.'],['ביטוח דירה - תכולה','רכוש בתוך הדירה. בדוק תתי-גבולות לתכשיטים, מחשב, אופניים.'],['נזקי מים בדירה','הבחן: תיקון מקור הנזק מול נזק נלווה. שרברב הסדר/פרטי, איתור, איטום ובלאי.'],['רעידת אדמה','כיסוי נפרד לעיתים. בדוק אם נרכש ומה ההשתתפות - לרוב באחוזים.'],['ועד בית - חבות מעבידים','כיסוי לעובדי הוועד/חברת ניהול אם נרכש. בדוק גבול והחרגות.'],['ועד בית - צד ג','גבול אחריות למקרה ולתקופה. בדוק הרחבת חברי ועד ואחריות אישית.'],['ועד בית - מעלית','מעלית היא מערכת נפרדת - בדוק תחזוקה, בדיקות, רישוי וכיסוי מפורש.'],['ועד בית - עמדת טעינה','עמדת טעינה וסולארי אינם מכוסים אוטומטית. נדרש ציון מפורש ותנאי מיגון.'],['בריאות - משלים שבן','משלים את השבן. לא משלם כפל על אותו שירות בלי תיאום.'],['בריאות - שקל ראשון','משלם ללא תלות בשבן, בכפוף לתקרה ולהגדרות.'],['בריאות - תרופות מחוץ לסל','בדוק התוויה, תקרה שנתית, השתתפות, אישור מראש.'],['סיעוד','בדוק הגדרת מצב סיעודי, תקופת המתנה, תקופת פיצוי, סכום חודשי.'],['תאונות אישיות','פיצוי לפי טבלת נכות. בדוק הגדרת תאונה, חריגי ספורט, גיל סיום.'],['חיים - ריסק','סכום למקרה מוות בלבד. בדוק מוטבים, תקופה, הצמדה.'],['משכנתא - מבנה','סכום לפי עלות הקמה מחדש. בדוק מוטב/שעבוד לבנק.'],['משכנתא - חיים','סכום לפי יתרת הלוואה. בדוק מוטב בלתי חוזר.'],['נסיעות - ביטול','סיבות מזכות בלבד, מועד רכישה, אסמכתאות.'],['נסיעות - כבודה','תתי-גבולות לפריטים יקרים, חריגי מזוודה, דיווח.'],['עסק - חבות','חבות כלפי צד ג ועובדים. בדוק גבול למקרה ולתקופה, בסיס תביעה.'],['עסק - רכוש','מבנה, ציוד, מלאי, אובדן רווחים. בדוק סכומים ותתי-גבולות.'],['שיניים','בדוק תקרה שנתית, השתתפות, תקופת אכשרה, רשימת רופאים.'],['החרגה רפואית','סייג אישי - חל רק על המבוטח/המצב המצוין, לא על כל הפוליסה.'],['תקופת אכשרה בבריאות','חודשים שבהם כיסוי מסוים עדיין לא חל. בדוק לכל פרק בנפרד.'],['דמי כינון','חידוש סכום הביטוח לאחר תביעה, בתשלום פרמיה יחסית.'],['מוסך הסדר','בחירת מוסך משפיעה על השתתפות ועל תנאי התיקון.'],['ירידת ערך','פיצוי על ירידת שווי הרכב לאחר תיקון, לפי טבלה ותנאים.'],['גרירה ושמשות','הרחבות נפוצות - בדוק גבול, השתתפות, ספק הסדר.']];for(const e of _extra){if(!INSURANCE_KB.principles.some(p=>p[0]===e[0]))INSURANCE_KB.principles.push(e)} INSURANCE_KB.branches=INSURANCE_KB.branches||{};Object.assign(INSURANCE_KB.branches,{'סיעוד':{terms:['מצב סיעודי','תקופת המתנה','פיצוי חודשי','אשפוז סיעודי'],checks:['בדוק הגדרת מצב סיעודי','בדוק תקופת המתנה ופיצוי','בדוק גיל סיום ותקרה'],notAssume:['סיעוד אינו אשפוז כללי']},'תאונות':{terms:['נכות','פיצוי יומי','שברים'],checks:['בדוק הגדרת תאונה','בדוק טבלת נכות','בדוק חריגי ספורט'],notAssume:['כל פציעה אינה תאונה']},'שיניים':{terms:['טיפול','שתל','כתר','אורתודנטיה'],checks:['בדוק תקרה','בדוק אכשרה','בדוק רופא הסדר'],notAssume:['כל טיפול שיניים מכוסה']},'עסק':{terms:['חבות','רכוש','אובדן רווחים'],checks:['בדוק גבול חבות','בדוק סכומי רכוש','בדוק אובדן רווחים'],notAssume:['פוליסת עסק אינה פוליסת דירה']}});}}catch(e){}
 function normalizeOcrText(t){return String(t||'').replace(/[װױ]/g,'ו').replace(/\s+([.,:;])/g,'$1').replace(/(\d)\s+(\d)/g,'$1$2').trim()}
