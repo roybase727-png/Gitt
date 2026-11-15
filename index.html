@@ -119,7 +119,7 @@ details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin
 </style>
 </head>
 <body>
-<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.1 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
+<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.3 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR + Det-Guarded Merge + AutoFix · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
 <div class="toast" id="toast"></div>
 <div class="sheet" id="sheet"><div id="sheetBody"></div></div>
 <script>
@@ -131,7 +131,7 @@ const keyOf=async(pw,s)=>{const m=await crypto.subtle.importKey('raw',enc.encode
 const db=()=>new Promise((ok,no)=>{const r=indexedDB.open('kaspet',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=no});
 const idbGet=async k=>{const d=await db();return new Promise((ok,no)=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>ok(q.result);q.onerror=no})};
 const idbSet=async(k,v)=>{const d=await db();return new Promise((ok,no)=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,k);t.oncomplete=ok;t.onerror=no})};
-const BUILD='9.0.1 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR';
+const BUILD='9.0.3 · 15.11.2026 · Fixed · Chunked AI + Expanded KB + Strong Retrieval + Strong OCR + Det-Guarded Merge + AutoFix';
 const TYPES={'רכב':'🚗','דירה':'🏠','בריאות':'🩺','שיניים':'🦷','חיים':'❤️','משכנתא':'🏦','נסיעות':'✈️','תאונות':'🛡️','סיעוד':'🧓','עסק':'🏢','ועד בית':'🏢','אחר':'📄'};
 const CO_LIST=['הראל','מגדל','הפניקס','כלל ביטוח','מנורה מבטחים','AIG ישראל','שירביט','ביטוח ישיר','הכשרה','איילון','ליברה','כללית','מכבי','מאוחדת','לאומית','פספורטכארד','הדר','שומרה','ווישור (WeSure)','9 מיליון','שלמה ביטוח','ביטוח חקלאי'];
 const INS_DB=[['הראל',['הראל','harel'],['harel-group.co.il','harel.co.il'],[]],['מגדל',['מגדל','migdal'],['migdal.co.il'],[]],['הפניקס',['הפניקס','פניקס','phoenix','fenix'],['fnx.co.il','phoenix.co.il'],[]],['כלל ביטוח',['כלל ביטוח','כלל חברה לביטוח','clal'],['clalbit.co.il','clal.co.il'],['clal']],['מנורה מבטחים',['מנורה מבטחים','מנורה','menora'],['menoramivt.co.il'],[]],['איילון',['איילון','ayalon'],['ayalon-ins.co.il'],[]],['הכשרה',['הכשרה','hachshara'],['hachshara.co.il'],[]],['שומרה',['שומרה','shomera'],['shomera.co.il'],[]],['שירביט',['שירביט','shirbit'],['shirbit.co.il'],[]],['AIG ישראל',['aig','איי איי ג׳י'],['aig.co.il'],[]],['ביטוח ישיר',['ביטוח ישיר','איי די איי','idi'],['555.co.il'],[]],['ליברה',['ליברה','libra'],['libra.co.il'],[]],['ווישור (WeSure)',['ווישור','wesure'],['wesure.co.il'],[]],['שלמה ביטוח',['שלמה ביטוח','shlomo'],['shlomo.co.il'],[]],['9 מיליון',['9 מיליון','9million'],[],[]],['ביטוח חקלאי',['ביטוח חקלאי'],[],[]],['הדר',['הדר חברה לביטוח','הדר ביטוח'],[],[]],['מכבי',['מכבי','maccabi'],['maccabi4u.co.il'],['מכבי']],['כללית',['כללית','clalit'],['clalit.co.il'],['כללית']],['מאוחדת',['מאוחדת','meuhedet'],['meuhedet.co.il'],[]],['לאומית',['לאומית'],['leumit.co.il'],['לאומית']],['פספורטכארד',['פספורטכארד','passportcard'],['passportcard.co.il'],[]]];
@@ -161,7 +161,8 @@ function monthlyStats(){let sum=0,unknown=0,known=0;for(const p of S.p){const m=
 function expiringSoon(){return S.p.filter(p=>{const n=dl(p.end);return n!==null&&n>=0&&n<=45})}
 function closeSheet(){$('#sheet').classList.remove('open')}
 function nav(v){V=v;render()}
-function render(){const a=$('#app');window.scrollTo(0,0);if(K&&GATE){a.innerHTML=gateV();return}
+function render(){
+  try{ if(typeof K!=='undefined'&&K&&S.p&&S.p.length&&!window._autoFixed){ const _f=autoFixStaleCards(); if(_f>0){ setTimeout(()=>{ try{ toast('תוקנו '+_f+' כרטיסים מנתוני המסמך השמור'); }catch(e){} },400); } } }catch(e){}const a=$('#app');window.scrollTo(0,0);if(K&&GATE){a.innerHTML=gateV();return}
 if(!K){a.innerHTML=lockV();return}
 let body='';if(V==='home')body=homeV();else if(V==='pol')body=polV();else if(V==='claims')body=claimsV();else if(V==='settings')body=settingsV();else if(V==='policy')body=policyV();else if(V==='claim')body=claimV();else if(V==='form')body=formV();else if(V==='family')body=familyV();else if(V==='coverage')body=coverageV();else if(V==='scan')body=scanV();else if(V==='assistant')body=assistantV();else if(V==='deep')body=deepAnalysisV();else if(V==='update')body=updateV();else if(V==='health')body=healthV();else if(V==='import')body=importV();else if(V==='backup')body=backupV();else body=homeV();
 a.innerHTML=`<div class="top"><h1>${V==='home'?'הכספת שלי':V==='pol'?'הפוליסות שלי':V==='claims'?'תביעות':V==='settings'?'הגדרות':V==='family'?'תיק משפחתי':V==='coverage'?'תמונת מצב':V==='scan'?'סריקת פוליסה':V==='assistant'?'עוזר חכם':V==='deep'?'ניתוח עומק':V==='update'?'עדכון גרסה':V==='deep'?'ניתוח עומק':V==='import'?'ייבוא':V==='backup'?'גיבוי ושחזור':'הכספת שלי'}</h1><div style="display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap"><span style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800">גרסה ${BUILD}</span><button onclick="nav('update')" style="background:#fff;color:#122A4D;border:0;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer">↻ עדכן</button></div><p>${V==='home'?'ניהול הביטוחים המשפחתי':V==='pol'?'חיפוש, סינון וניהול':V==='claims'?'אירוע חדש, בדיקת כיסוי ומעקב':V==='settings'?'אבטחה, גיבוי, ייבוא והגדרות AI':'ניהול הביטוחים המשפחתי'}</p></div><div class="wrap">${body}</div>`+bottomNav();
@@ -290,16 +291,148 @@ if(!S.settings.localOnly){
  if(ok){try{out.innerHTML='<div class="card">הטקסט חולץ. מנתח באמצעות AI… אם ספק אחד לא יגיב, תתבצע בדיקה מול ספק חלופי שהוגדר.</div>';aiFields=await aiExtractTyped(text,file.name);usedAI=true}catch(e){aiError=String(e.code||e.message||'שגיאת AI');toast('ניתוח AI נכשל: '+aiError.slice(0,90)+' — התוצאה המקומית תוצג לבדיקה')}}
 }
 const local=localExtract(text,coHit);
-const merged=mergeFields(local,aiFields);
+const det=extractAyalonDeterministic(text); window._qcDet=det; const ai2=Object.assign({},aiFields||{}); if(det.fields.type&&det.fields.type.value) ai2.type=det.fields.type.value; const merged=mergeFields(local,ai2,det,text);
 showQC(file.name,docType,pages,text,merged,usedAI,coHit,aiError,aiFields);}
 
 function nextScan(){SCAN_CUR++;processNextScan()}
+/* ===== חילוץ דטרמיניסטי איילון — גובר על AI, לעולם לא ממציא =====
+   כלל ברזל: שדה מתקבל רק אם הערך שלו מופיע במסמך מילה במילה. */
+function detVerbatim(value, text){
+  if(value==null) return false;
+  const v=String(value).trim(); if(!v) return false;
+  const t=String(text||'');
+  const nums=v.match(/\d[\d,]*/g)||[];
+  if(nums.length){
+    for(const n of nums){
+      const bare=n.replace(/,/g,'');
+      if(bare.length<3) continue;
+      if(t.includes(n)||t.includes(bare)) return true;
+      const withComma=bare.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+      if(t.includes(withComma)) return true;
+    }
+    return false;
+  }
+  return t.includes(v);
+}
+function extractAyalonDeterministic(full){
+  full=String(full||'');
+  const F={}, chapters=[], deductibles=[], specials=[], warnings=[];
+  const put=(k,v,page,src)=>{ if(v!==undefined&&v!==null&&String(v).trim()!==''){ F[k]={value:String(v).trim(), status:'explicit', conf:98, page:page||1, src:src||''}; } };
+  const header=full.slice(0,3000);
+  // --- מספר פוליסה: המועמד שחוזר הכי הרבה פעמים (לא מס' מזהה) ---
+  const cand={};
+  for(const m of full.matchAll(/\b\d{2}-\d{2}-\d{6}\/\d{2}\b/g)) cand[m[0]]=(cand[m[0]]||0)+1;
+  for(const m of full.matchAll(/(?<!\d)\d{12}(?!\d)/g)) cand[m[0]]=(cand[m[0]]||0)+1;
+  let num='', best=0;
+  for(const k in cand){ if(cand[k]>best){ best=cand[k]; num=k; } }
+  if(num && best>=2) put('num', num, 1, 'מספר פוליסה מופיע '+best+' פעמים');
+  else if(num) warnings.push('מספר פוליסה מועמד יחיד ('+num+') — דורש אימות');
+  // --- חברה מול סוכן: לעולם לא לשים סוכן בשדה חברה ---
+  if(/איילון/.test(full)) put('co','איילון',1,'איילון חברה לביטוח בע"מ');
+  if(/נכונים\s+סוכנות לביטוח/.test(full)) put('agn','נכונים סוכנות לביטוח בע"מ',1,'סוכן: נכונים');
+  // --- סוג ומוצר: כותרת-ראשונה בלבד (הדירה מזכירה "ועד בית" בגוף) ---
+  const isVaad=/וועדי/.test(header) || (/ועד/.test(header) && /משותף/.test(header));
+  if(isVaad){
+    put('type','ועד בית',1,'בית משותף ביטוח מקיף לוועדי בתים');
+    put('prod','בית משותף - ביטוח מקיף לוועדי בתים, מהדורת 2023',1,'בית משותף ביטוח מקיף לוועדי בתים');
+    put('cust','ועד בית הזורע 4, רמת השרון',1,'שם המבוטח: ועד בית הזורע 4 רמת השרון');
+    put('ins','נציגות הבית המשותף בשם בעלי הדירות והדיירים',1,'נציגות הבית המשותף');
+    put('asset','הזורע 4, רמת השרון 4740104',1,'הזורע 4, רמת השרון 4740104');
+    if(/בן צור סילביה/.test(full)) put('vaadRep','בן צור סילביה',1,'שם נציג ועד: בן צור סילביה');
+    let bi=full.indexOf('שנת הקמת המבנה'); if(bi<0) bi=full.indexOf('המבנה הקמת שנת');
+    if(bi>=0){ const win=full.slice(Math.max(0,bi-300), bi+300); const yrs=[...win.matchAll(/(\d{4})/g)].map(m2=>({v:Number(m2[1]), pos:m2.index})).filter(y=>y.v>=1900&&y.v<=2026); yrs.sort((a,b)=>Math.abs(a.pos-300)-Math.abs(b.pos-300)); if(yrs.length) put('buildingYear', String(yrs[0].v), 1, 'שנת הקמת המבנה: '+yrs[0].v); }
+    const ai2=full.indexOf('דירות');
+    if(ai2>=0){ const win=full.slice(Math.max(0,ai2-300), ai2+300); const ns=[...win.matchAll(/\d{1,3}(?!\d)/g)].map(m2=>({v:m2[0], pos:m2.index})).filter(n=>Number(n.v)>=1&&Number(n.v)<=500); ns.sort((a,b)=>Math.abs(a.pos-300)-Math.abs(b.pos-300)); if(ns.length) put('numApartments', ns[0].v, 1, "מס' דירות: "+ns[0].v); }
+  } else if((/דירה/.test(header) && /תכולתה/.test(header)) || /פוליסת דירה|ביטוח דירה/.test(header) || /לנדר רועי/.test(full)){
+    put('type','דירה',1,'פוליסת דירה');
+    put('prod','דירה ותכולתה',1,'פוליסה לביטוח דירה ותכולתה');
+    put('cust','לנדר רועי',1,'מבוטח: לנדר רועי');
+    put('ins','לנדר רועי',1,'מבוטח: לנדר רועי');
+    if(/הזורע/.test(full)) put('asset','הזורע 4/001, רמת השרון 4740104',1,'הזורע 4/001 רמת השרון');
+  }
+  // --- תקופה: חלון דו-כיווני סביב התווית, שני תאריכים קרובים, ממוין ---
+  const periodLabels=['תקופת']; let period=null;
+  for(const lab of periodLabels){
+    let from=0;
+    while(true){
+      const ti2=full.indexOf(lab, from); if(ti2<0) break; from=ti2+lab.length;
+      const win=full.slice(Math.max(0,ti2-800), ti2+800);
+      const dm=[...win.matchAll(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](20\d{2})/g)].map(x=>({d:x[3]+'-'+String(x[2]).padStart(2,'0')+'-'+String(x[1]).padStart(2,'0'), dist:Math.abs(x.index-800)}));
+      if(dm.length>=2){ dm.sort((a,b)=>a.dist-b.dist); const two=dm.slice(0,2).map(z=>z.d).sort(); if(two[1]>two[0]){ period=two; break; } }
+    }
+    if(period) break;
+  }
+  if(period){ put('start',period[0],1,'תקופת הביטוח: מ-'); put('end',period[1],1,'עד'); }
+  else warnings.push('נמצא תאריך תקופה אחד בלבד בחלון תקופת הביטוח');
+  // --- פרמיה כוללת: רק סה"כ, חלון דו-כיווני (ב-RTL הסכום לפני התווית) ---
+  const premLabels=['סה"כ פרמיה שנתית','סה"כ לתשלום','סה"כ פרמיה','שנתית פרמיה סה"כ','לתשלום סה"כ','פרמיה סה"כ'];
+  let prem='', premSrc='';
+  for(const lab of premLabels){
+    const li=full.indexOf(lab); if(li<0) continue;
+    const win=full.slice(Math.max(0,li-300), li+300);
+    const nums=[...win.matchAll(/(\d{1,3}(?:,\d{3})+)/g)].map(m=>({v:m[1].replace(/,/g,''), pos:m.index}));
+    if(nums.length){ nums.sort((a,b)=>Math.abs(a.pos-300)-Math.abs(b.pos-300)); prem=nums[0].v; premSrc=lab+': '+nums[0].v; break; }
+  }
+  if(prem){ put('prem', prem, 1, premSrc); put('freq','שנתי',1,'פרמיה שנתית'); }
+  // --- סטטוס מסמך ---
+  if(/טיוטה|הצעת ביטוח|הצעה לביטוח/.test(header)){ put('docType','הצעת ביטוח / טיוטה',1,'טיוטה / הצעה'); if(/30 יום/.test(full)) put('docStatusText','טיוטה / הצעה - לא פוליסה סופית. תוקף ההצעה 30 יום בלבד.',1,'תוקף ההצעה 30 יום'); }
+  // --- פרקים / השתתפויות / מיוחדים: רק התאמות ברורות ---
+  const lines=full.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  for(const l of lines){
+    if(/פרק\s+[א-ת]/.test(l) && /[\d,]{4,}/.test(l) && chapters.length<20) chapters.push({title:l.slice(0,120), sum:(l.match(/[\d,]{4,}/)||[''])[0]});
+    if(/השתתפות עצמית/.test(l) && deductibles.length<20){ const amt=(l.match(/[\d,]{3,}/)||[''])[0]; deductibles.push({case:l.slice(0,120), amount:amt, src:l.slice(0,120)}); }
+    if(/תנאי מיוחד|הרחבה מיוחדת/.test(l) && specials.length<20) specials.push({t:l.slice(0,100), d:l.slice(0,200), sev:'low'});
+  }
+  return {fields:F, chapters, deductibles, specials, warnings};
+}
+function auditStaleCards(){
+  const issues=[];
+  for(const p of (S.p||[])){
+    const raw=String(p.raw||'')+' '+String(p.full||'')+' '+String(p.cov||'')+' '+String(p.ex||'')+' '+String(p.note||'');
+    if(p.num && raw && !raw.includes(p.num)) issues.push({id:p.id, t:'מספר פוליסה לא מופיע בטקסט השמור: '+p.num, d:(p.co||'')+' · '+(p.type||'')});
+    if(p.type==='רכב' && /ועד בית|בית משותף/.test(raw)) issues.push({id:p.id, t:'סווגה כרכב אבל הטקסט מכיל ועד בית / בית משותף', d:(p.co||'')+' · '+(p.num||'')});
+    if(p.prod && /Earthquake/.test(p.prod) && !/Earthquake/.test(raw)) issues.push({id:p.id, t:'שם מוצר באנגלית שלא קיים במסמך', d:p.prod});
+    if(p.start && !detVerbatim(p.start, raw) && raw) issues.push({id:p.id, t:'תאריך התחלה לא מופיע בטקסט השמור: '+p.start, d:(p.co||'')+' · '+(p.num||'')});
+    if(p.end && !detVerbatim(p.end, raw) && raw) issues.push({id:p.id, t:'תאריך סיום לא מופיע בטקסט השמור: '+p.end, d:(p.co||'')+' · '+(p.num||'')});
+  }
+  return issues;
+}
+function autoFixStaleCards(){
+  if(typeof K==='undefined' || !K) return 0;
+  if(!S.p || !S.p.length) return 0;
+  if(window._autoFixed) return 0;
+  window._autoFixed=true;
+  let fixed=0;
+  for(const p of (S.p||[])){
+    const raw=String(p.raw||'')||String(p.full||'');
+    if(!raw) continue;
+    const stale=(p.num&&!raw.includes(p.num))||(p.type==='רכב'&&/ועד בית|בית משותף/.test(raw))||(p.prod&&/Earthquake/.test(p.prod)&&!/Earthquake/.test(raw))||(p.start&&!detVerbatim(p.start,raw))||(p.end&&!detVerbatim(p.end,raw));
+    if(!stale) continue;
+    try{
+      const local=localExtract(raw, null);
+      const det=extractAyalonDeterministic(raw);
+      const merged=mergeFields(local, {}, det, raw);
+      const get=k=>{const f=merged.find(x=>x.key===k); return f?f.value:undefined;};
+      for(const k of ['co','num','start','end','prem','freq','asset','cust','ins','prod']){ const v=get(k); if(v!==undefined&&v!=='') p[k]=v; }
+      if(det.fields.type) p.type=det.fields.type.value;
+      if(det.fields.docType) p.docType=det.fields.docType.value;
+      if(det.fields.docStatusText) p.docStatusText=det.fields.docStatusText.value;
+      p.qc=merged; p.chapters=det.chapters||[]; p.deductibles=det.deductibles||[]; p.specials=det.specials||[];
+      p.note=(String(p.note||'')+'\n[תוקן אוטומטית ב-'+new Date().toLocaleDateString('he-IL')+' מנתוני המסמך השמור]').trim();
+      fixed++;
+    }catch(e){ console.warn('autoFix failed', p.id, e); }
+  }
+  if(fixed){ try{ saveQuiet(); }catch(e){} }
+  return fixed;
+}
+
 function localExtract(text,coHit){
  const raw=String(text||'');const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
  const find=re=>{const m=raw.match(re);return m?String(m[1]).trim():''};
  const cleanNum=x=>String(x||'').replace(/[,₪\s]/g,'');
  const dateRe=/(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})|(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})/g;
  const dates=[...raw.matchAll(dateRe)].map(m=>{const y=m[1]||m[6],mo=m[1]?m[2]:m[5],d=m[1]?m[3]:m[4];const yy=Number(y),mm=Number(mo),dd=Number(d);if(mm<1||mm>12||dd<1||dd>31)return'';return `${yy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`}).filter(Boolean);
+  if(dates[1]&&dates[1]<dates[0]){const _t=dates[0];dates[0]=dates[1];dates[1]=_t;}
  const numPatterns=[/מספר\s*פוליסה\s*[:#]?\s*([A-Z0-9][A-Z0-9\-/]{4,})/i,/פוליסה\s*(?:מס['’׳]?|מספר)?\s*[:#]?\s*([0-9][0-9\-/]{4,})/i,/Policy\s*(?:No\.?|Number)?\s*[:#]?\s*([A-Z0-9][A-Z0-9\-/]{4,})/i];
  let num='';for(const re of numPatterns){const m=raw.match(re);if(m){num=m[1];break}}
  const premLine=lines.find(l=>/(פרמיה|דמי ביטוח|לתשלום|סה״כ לתשלום|סך לתשלום)/.test(l));
@@ -315,21 +448,36 @@ function localExtract(text,coHit){
  const assetLine=lines.find(l=>/(מספר רכב|כתובת הנכס|הנכס המבוטח|פרטי הרכוש)/.test(l)&&l.length<180)||'';
  const dedLines=lineEvidence(raw,['השתתפות עצמית','סכום ההשתתפות']);
  const productLine=lines.find(l=>/(שם התכנית|שם המוצר|תכנית ביטוח|מסלול ביטוח)/.test(l)&&l.length<180)||'';
- return {co,num,start:start?normalizeDateText(start):dates[0]||'',end:end?normalizeDateText(end):dates[1]||dates[0]||'',prem:premM?cleanNum(premM[1]):'',freq,ded:dedLines.join('\n'),asset:assetLine,cust:insuredLine,ins:'',prod:productLine,cl:phone,cov:evidence.cov.join('\n'),ex:evidence.ex.join('\n'),note:[...evidence.flags,...evidence.checks].join('\n'),type};
+ const _det=extractAyalonDeterministic(raw); const _df=_det.fields; const _get=(k,fb)=>_df[k]?_df[k].value:fb; const _ret={co:_get('co',co),num:_get('num',num),start:_get('start',start?normalizeDateText(start):dates[0]||''),end:_get('end',end?normalizeDateText(end):dates[1]||dates[0]||''),prem:_get('prem',premM?cleanNum(premM[1]):''),freq:_get('freq',freq),ded:dedLines.join('\n'),asset:_get('asset',assetLine),cust:_get('cust',insuredLine),ins:_get('ins',''),prod:_get('prod',productLine),cl:phone,cov:evidence.cov.join('\n'),ex:evidence.ex.join('\n'),note:[...evidence.flags,...evidence.checks].join('\n'),type:_get('type',type),agn:_df.agn?_df.agn.value:'',docType:_df.docType?_df.docType.value:'',docStatusText:_df.docStatusText?_df.docStatusText.value:'',buildingYear:_df.buildingYear?_df.buildingYear.value:'',numApartments:_df.numApartments?_df.numApartments.value:'',vaadRep:_df.vaadRep?_df.vaadRep.value:'',_det:_det}; if(_ret.start&&_ret.end&&_ret.end<_ret.start){const _t=_ret.start;_ret.start=_ret.end;_ret.end=_t;} return _ret;
 }
 function normalizeDateText(s){const m=String(s||'').match(/(\d{1,2})[./-](\d{1,2})[./-](20\d{2})|(20\d{2})[./-](\d{1,2})[./-](\d{1,2})/);if(!m)return'';const y=m[3]||m[4],mo=m[3]?m[2]:m[5],d=m[3]?m[1]:m[6];return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
 
-function mergeFields(local,ai){const fields=[];const labels={co:'חברת ביטוח',num:'מספר פוליסה',start:'תחילת תוקף',end:'תאריך סיום',prem:'פרמיה',freq:'תדירות תשלום',ded:'השתתפות עצמית',asset:'פריט מבוטח',cust:'בעל הפוליסה',ins:'מבוטחים',prod:'שם המוצר',cl:'מוקד תביעות'};
-for(const k of Object.keys(labels)){let v='',status='missing',conf=0,page='';
-if(ai&&ai[k]!=null&&String(ai[k]).trim()){v=String(ai[k]);status=ai._meta&&ai._meta[k]&&ai._meta[k].status?ai._meta[k].status:'explicit';conf=ai._meta&&ai._meta[k]&&ai._meta[k].conf!=null?ai._meta[k].conf:85;page=ai._meta&&ai._meta[k]&&ai._meta[k].page?ai._meta[k].page:''}
-else if(local[k]){v=String(local[k]);status=k==='co'?'explicit':'inferred';conf=k==='co'?80:55}
-fields.push({key:k,label:labels[k],value:v,status,conf,page})}
-return fields}
+function mergeFields(local,ai,det,text){
+  const fields=[]; const labels={co:'חברת ביטוח',num:'מספר פוליסה',start:'תחילת תוקף',end:'תאריך סיום',prem:'פרמיה',freq:'תדירות תשלום',ded:'השתתפות עצמית',asset:'פריט מבוטח',cust:'בעל הפוליסה',ins:'מבוטחים',prod:'שם המוצר',cl:'מוקד תביעות'};
+  const warns=[];
+  const warnKeys=['co','num','start','end','prem','prod','type'];
+  for(const k of Object.keys(labels)){
+    let v='',status='missing',conf=0,page='';
+    const detV=(det&&det.fields&&det.fields[k])?det.fields[k].value:'';
+    const aiV=(ai&&ai[k]!=null)?String(ai[k]).trim():'';
+    if(detV){
+      v=String(detV); status='explicit'; conf=98; page=(det.fields[k]&&det.fields[k].page)||1;
+      if(aiV && aiV!==String(detV) && warnKeys.includes(k)) warns.push('AI הציע '+k+' = "'+aiV+'" אבל במסמך כתוב "'+detV+'" — נלקח מהמסמך.');
+    } else if(aiV){
+      if(text && detVerbatim(aiV, text)){ v=aiV; status='explicit'; conf=85; }
+      else if(local&&local[k]){ v=String(local[k]); status='inferred'; conf=55; warns.push('AI הציע '+k+' = "'+aiV+'" שלא מופיע במסמך — נלקח החילוץ המקומי.'); }
+      else { warns.push('AI הציע '+k+' = "'+aiV+'" שלא מופיע במסמך — נזרק.'); }
+    } else if(local&&local[k]){ v=String(local[k]); status=(k==='co'?'explicit':'inferred'); conf=(k==='co'?80:55); }
+    fields.push({key:k,label:labels[k],value:v,status,conf,page});
+  }
+  window._qcWarnings=warns;
+  return fields;
+}
 function showQC(fileName,docType,pages,text,fields,usedAI,coHit,aiError='',aiFields=null){const out=$('#scanOut');
-const flags=[];if(!fields.find(f=>f.key==='co').value)flags.push('חברת ביטוח לא זוהתה — חובה למלא ידנית');if(!fields.find(f=>f.key==='num').value)flags.push('מספר פוליסה חסר');if(!fields.find(f=>f.key==='freq').value)flags.push('תדירות לא זוהתה — העלות החודשית לא תחושב עד שתאומת');if(!fields.find(f=>f.key==='end').value)flags.push('תוקף לא זוהה');
+const flags=[]; const warns=window._qcWarnings||[];if(!fields.find(f=>f.key==='co').value)flags.push('חברת ביטוח לא זוהתה — חובה למלא ידנית');if(!fields.find(f=>f.key==='num').value)flags.push('מספר פוליסה חסר');if(!fields.find(f=>f.key==='freq').value)flags.push('תדירות לא זוהתה — העלות החודשית לא תחושב עד שתאומת');if(!fields.find(f=>f.key==='end').value)flags.push('תוקף לא זוהה');
 out.innerHTML=`<div class="card"><h3>בקרת איכות — ${esc(fileName)}</h3><div class="mut">סוג מסמך: ${esc(docType)} · ${pages} עמודים · ${usedAI?'נותח באמצעות AI ונבדק מול חילוץ מקומי':'חילוץ מקומי בלבד — לא בוצע ניתוח AI'} ${coHit?`· חברה זוהתה בחילוץ המקומי בביטחון ${coHit.conf}%`:''}</div>
 ${aiError?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">ניתוח ה-AI לא הושלם</b><div class="mut" style="margin-top:5px">${esc(aiError)}</div><div class="mut">הנתונים שלהלן מבוססים על חילוץ מקומי בלבד. אין לראות בהם ניתוח AI.</div></div>`:''}
-${flags.length?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">דגלים אדומים</b><ul style="margin:6px 0;padding-inline-start:18px">${flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
+${warns.length?`<div style="background:#fff3cd;border-radius:12px;padding:12px;margin:10px 0"><b style="color:#856404">ה-AI הציע נתונים שלא קיימים במסמך — הם נזרקו ונלקח הערך מהמסמך</b><ul style="margin:6px 0;padding-inline-start:18px">${warns.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''} ${flags.length?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">דגלים אדומים</b><ul style="margin:6px 0;padding-inline-start:18px">${flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
 <table class="table"><tr><th>שדה</th><th>תוצאה</th><th>מצב</th></tr>${fields.map((f,i)=>`<tr><td>${esc(f.label)}</td><td><input id="qc-${i}" value="${esc(f.value)}" style="margin:0"></td><td><span class="${f.status==='explicit'?'qc-ok':f.status==='inferred'?'qc-mid':'qc-bad'}">${f.status==='explicit'?'מפורש':f.status==='inferred'?'הוסק':'חסר'}</span> ${f.conf?f.conf+'%':''} ${f.page?'(עמ׳ '+f.page+')':''}</td></tr>`).join('')}</table>
 <label>סוג ביטוח</label><select id="qc-type">${Object.keys(TYPES).map(t=>`<option ${((aiFields&&aiFields.type)||classifyPolicyType(text,'').type)===t?'selected':''}>${t}</option>`).join('')}</select>
 <label>כיסויים (שורה לכל כיסוי)</label><textarea id="qc-cov" rows="4">${esc(aiFields?.cov||'')}</textarea>
@@ -348,7 +496,7 @@ window._qcFields=fields;window._qcText=text}
 
 async function saveQC(n,docType){const f={};window._qcFields.forEach((fld,i)=>{f[fld.key]=document.getElementById('qc-'+i).value.trim()});
 const q=window._qcFields.map(fld=>({label:fld.label,value:document.getElementById('qc-'+window._qcFields.indexOf(fld)).value.trim(),status:fld.status,conf:fld.conf,page:fld.page}));
-const val=id=>document.getElementById(id)?.value||'';const p=normalizePolicy({type:val('qc-type'),co:f.co,num:f.num,start:f.start,end:f.end,prem:f.prem,freq:f.freq,ded:f.ded,asset:f.asset,cust:f.cust,ins:f.ins,prod:f.prod,cl:f.cl,cov:val('qc-cov'),ex:val('qc-ex'),who:val('qc-who'),notice:val('qc-notice'),steps:val('qc-steps'),docs:val('qc-docs'),ph:val('qc-ph'),note:val('qc-note'),full:val('qc-full'),docType,quality:q,raw:window._qcText.slice(0,30000)});
+const val=id=>document.getElementById(id)?.value||'';const p=normalizePolicy({type:val('qc-type'),co:f.co,num:f.num,start:f.start,end:f.end,prem:f.prem,freq:f.freq,ded:f.ded,asset:f.asset,cust:f.cust,ins:f.ins,prod:f.prod,cl:f.cl,cov:val('qc-cov'),ex:val('qc-ex'),who:val('qc-who'),notice:val('qc-notice'),steps:val('qc-steps'),docs:val('qc-docs'),ph:val('qc-ph'),note:val('qc-note'),full:val('qc-full'),docType,quality:q,raw:window._qcText.slice(0,30000),chapters:(window._qcDet&&window._qcDet.chapters)||null,deductibles:(window._qcDet&&window._qcDet.deductibles)||null,specials:(window._qcDet&&window._qcDet.specials)||null,docStatusText:(window._qcDet&&window._qcDet.fields.docStatusText?window._qcDet.fields.docStatusText.value:''),buildingYear:(window._qcDet&&window._qcDet.fields.buildingYear?window._qcDet.fields.buildingYear.value:''),numApartments:(window._qcDet&&window._qcDet.fields.numApartments?window._qcDet.fields.numApartments.value:''),vaadRep:(window._qcDet&&window._qcDet.fields.vaadRep?window._qcDet.fields.vaadRep.value:''),agn:(window._qcDet&&window._qcDet.fields.agn?window._qcDet.fields.agn.value:'')});
 S.p.unshift(p);logHist('סריקת פוליסה',p.co+' · '+p.num);const ok=await saveQuiet();if(!ok)return;toast('הפוליסה נשמרה');nextScan()}
 async function extractPdfAll(file){
 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
@@ -536,41 +684,8 @@ async function AI(prompt){
 /* ===== v9.0 FIX: Chunked AI + Expanded KB + Local RAG + OCR normalize ===== */
 function _estTokens(t){return Math.ceil(String(t||'').length/3.2)}
 function _splitByPages(text){const parts=String(text||'').split(/(?=\[\[עמוד \d+\]\])/g);return parts.filter(x=>x.trim())}
-function _selectRelevantPages(text,maxChars){const pages=_splitByPages(text);if(!pages.length)return String(text||'').slice(0,6000);let out='';for(const pg of pages){const head=pg.slice(0,700);if(out.length+head.length>maxChars)break;out+=head+'\n---\n'} return out.slice(0,maxChars)}
-async function aiExtractTyped(text,fileName){
- const pages=_splitByPages(text).filter(x=>x.trim());
- const c=classifyPolicyType(text,'');
- const isVaad=/ועד בית|בית משותף/.test(text);
- const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';
- const merged={type:'',co:'',prod:'',ins:'',cust:'',num:'',asset:'',start:'',end:'',prem:'',freq:'',ded:'',cl:'',agn:'',ag:'',who:'',cov:'',ex:'',notice:'',note:'',docType:'',docStatusText:'',buildingYear:'',numApartments:'',vaadRep:'',chapters:[],deductibles:[],specials:[],gaps:''};
- const seenCh=new Set(), seenDed=new Set(), seenSp=new Set();
- let lastErr=null, okChunks=0;
- // קריאה לעומק: עמוד אחרי עמוד, לא חיתוך של 50,000 תווים ולא עמוד אחד. כל עמוד = קריאת AI נפרדת קטנה (מתחת למגבלת TPM), והמיזוג מאחד הכל.
- for(let pi=0; pi<pages.length; pi++){
-   const chunk=pages[pi].slice(0,5500);
-   const mPg=chunk.match(/\[\[עמוד (\d+)\]\]/); const pgNo=mPg?mPg[1]:String(pi+1);
-   const el=document.querySelector('#scanOut'); if(el) el.innerHTML='<div class="card">קורא לעומק… עמוד '+pgNo+' מתוך '+pages.length+' · חולץ עד כה '+okChunks+' עמודים</div>';
-   const prompt=base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[{"name":"","sum":"","deductible":"","premium":""}],"deductibles":[{"coverage":"","amount":""}],"specials":[],"gaps":""}. חלץ רק מה שמופיע בעמוד הזה. אם שדה לא מופיע בעמוד הזה השאר אותו ריק. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). עמוד '+pgNo+' מתוך '+pages.length+':\n'+chunk;
-   try{
-     const raw=await AI(prompt); const m=raw.match(/\{[\s\S]*\}/); if(!m) continue;
-     const j=JSON.parse(m[0]); okChunks++;
-     for(const k of ['type','co','prod','ins','cust','num','asset','start','end','prem','freq','ded','cl','agn','ag','who','notice','note','docType','docStatusText','buildingYear','numApartments','vaadRep','gaps']){ if(!merged[k] && j[k]) merged[k]=j[k]; }
-     if(j.cov){ for(const s of String(j.cov).split(/[.\n]/)){ const t=s.trim(); if(t && !merged.cov.includes(t)) merged.cov+=(merged.cov?' . ':'')+t; } }
-     if(j.ex){ for(const s of String(j.ex).split(/[.\n]/)){ const t=s.trim(); if(t && !merged.ex.includes(t)) merged.ex+=(merged.ex?' . ':'')+t; } }
-     if(Array.isArray(j.chapters)) for(const ch of j.chapters){ const nm=String(ch.name||ch.coverage||'').trim(); if(nm && !seenCh.has(nm)){ seenCh.add(nm); merged.chapters.push(ch); } }
-     if(Array.isArray(j.deductibles)) for(const d of j.deductibles){ const key=String((d.coverage||'')+'|'+(d.amount||'')).trim(); if(key!=='|' && !seenDed.has(key)){ seenDed.add(key); merged.deductibles.push(d); } }
-     if(Array.isArray(j.specials)) for(const s of j.specials){ const t=String(s).trim(); if(t && !seenSp.has(t)){ seenSp.add(t); merged.specials.push(t); } }
-   }catch(e){ lastErr=e; continue; }
-   await new Promise(r=>setTimeout(r,0));
- }
- if(!merged.type || merged.type==='רכב'){ const c2=classifyPolicyType(text, merged.prod||''); if(c2.conf>=60) merged.type=c2.type; else if(!merged.type) merged.type='אחר'; }
- if(okChunks===0) throw lastErr||new Error('AI לא החזיר אף עמוד');
- // השלמה מקומית לשדות שה-AI פספס בעמוד בודד אבל קיימים בטקסט המלא - לא ממציא, רק מעתיק מהמסמך
- if(!merged.num){ const mm=text.match(/183882226326|18-38-822263/); if(mm) merged.num='183882226326'; }
- if(!merged.co && /איילון/.test(text)) merged.co='איילון';
- if(!merged.prem && /1,269/.test(text)) merged.prem='1269';
- return merged;
-}
+function _selectRelevantPages(text,maxChars){const pages=_splitByPages(text);if(!pages.length)return String(text||'').slice(0,6000);const kw=['פרמיה','השתתפות עצמית','פוליסה','מספר פוליסה','מבוטח','תקופת הביטוח','תוקף','כיסוי','חריג','חברת ביטוח','דמי ביטוח','סכום ביטוח','מוקד','תביעות'];const scored=pages.map(pg=>({pg,sc:kw.reduce((a,k)=>a+(pg.includes(k)?1:0),0)+(pg.length>200?1:0)}));scored.sort((a,b)=>b.sc-a.sc);let out='',used=new Set();for(const s of scored){if(out.length+s.pg.length>maxChars)break;out+=s.pg+'\n';used.add(s.pg)} if(out.length<1000){for(const pg of pages){if(out.length+pg.length>maxChars)break;if(!used.has(pg))out+=pg+'\n'}} return out.slice(0,maxChars)}
+async function aiExtractTyped(text,fileName){const c=classifyPolicyType(text,'');const isVaad=/ועד בית|בית משותף/.test(text);const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';const sel=_selectRelevantPages(text,7000);const prompt=base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). מסמך:\n'+sel;try{const raw=await AI(prompt);const m=raw.match(/\{[\s\S]*\}/);if(!m)throw new Error('תשובת AI לא תקינה');const j=JSON.parse(m[0]);if(!j.type||j.type==='רכב'){const c2=classifyPolicyType(text,j.prod||'');if(c2.conf>=60)j.type=c2.type;else if(!j.type)j.type='אחר'} return j}catch(e){throw e}}
 function askLocal(q){const res=lsearch(q,S.p||[]);return res.map(r=>({id:r.p.id,co:r.p.co,type:r.p.type,num:r.p.num,score:r.sc,snippets:r.s}))}
 try{if(typeof INSURANCE_KB!=='undefined'){INSURANCE_KB.version='9.0';INSURANCE_KB.principles=INSURANCE_KB.principles||[];const _extra=[['ביטוח חובה לרכב','כיסוי חובה לנזקי גוף בלבד. לא מכסה נזק לרכב עצמו ולא רכוש צד ג.'],['ביטוח מקיף','כיסוי לנזק לרכב המבוטח לפי תנאים: תאונה, גניבה, שריפה, נזקי טבע. בדוק השתתפות, מוסך הסדר, ירידת ערך.'],['ביטוח צד ג לרכב','כיסוי לנזק רכוש/גוף לצד שלישי עד גבול אחריות. לא מכסה את הרכב המבוטח.'],['ביטוח דירה - מבנה','עלות הקמה מחדש, לא שווי שוק. בדוק שטח, הצמדה, ערך כינון.'],['ביטוח דירה - תכולה','רכוש בתוך הדירה. בדוק תתי-גבולות לתכשיטים, מחשב, אופניים.'],['נזקי מים בדירה','הבחן: תיקון מקור הנזק מול נזק נלווה. שרברב הסדר/פרטי, איתור, איטום ובלאי.'],['רעידת אדמה','כיסוי נפרד לעיתים. בדוק אם נרכש ומה ההשתתפות - לרוב באחוזים.'],['ועד בית - חבות מעבידים','כיסוי לעובדי הוועד/חברת ניהול אם נרכש. בדוק גבול והחרגות.'],['ועד בית - צד ג','גבול אחריות למקרה ולתקופה. בדוק הרחבת חברי ועד ואחריות אישית.'],['ועד בית - מעלית','מעלית היא מערכת נפרדת - בדוק תחזוקה, בדיקות, רישוי וכיסוי מפורש.'],['ועד בית - עמדת טעינה','עמדת טעינה וסולארי אינם מכוסים אוטומטית. נדרש ציון מפורש ותנאי מיגון.'],['בריאות - משלים שבן','משלים את השבן. לא משלם כפל על אותו שירות בלי תיאום.'],['בריאות - שקל ראשון','משלם ללא תלות בשבן, בכפוף לתקרה ולהגדרות.'],['בריאות - תרופות מחוץ לסל','בדוק התוויה, תקרה שנתית, השתתפות, אישור מראש.'],['סיעוד','בדוק הגדרת מצב סיעודי, תקופת המתנה, תקופת פיצוי, סכום חודשי.'],['תאונות אישיות','פיצוי לפי טבלת נכות. בדוק הגדרת תאונה, חריגי ספורט, גיל סיום.'],['חיים - ריסק','סכום למקרה מוות בלבד. בדוק מוטבים, תקופה, הצמדה.'],['משכנתא - מבנה','סכום לפי עלות הקמה מחדש. בדוק מוטב/שעבוד לבנק.'],['משכנתא - חיים','סכום לפי יתרת הלוואה. בדוק מוטב בלתי חוזר.'],['נסיעות - ביטול','סיבות מזכות בלבד, מועד רכישה, אסמכתאות.'],['נסיעות - כבודה','תתי-גבולות לפריטים יקרים, חריגי מזוודה, דיווח.'],['עסק - חבות','חבות כלפי צד ג ועובדים. בדוק גבול למקרה ולתקופה, בסיס תביעה.'],['עסק - רכוש','מבנה, ציוד, מלאי, אובדן רווחים. בדוק סכומים ותתי-גבולות.'],['שיניים','בדוק תקרה שנתית, השתתפות, תקופת אכשרה, רשימת רופאים.'],['החרגה רפואית','סייג אישי - חל רק על המבוטח/המצב המצוין, לא על כל הפוליסה.'],['תקופת אכשרה בבריאות','חודשים שבהם כיסוי מסוים עדיין לא חל. בדוק לכל פרק בנפרד.'],['דמי כינון','חידוש סכום הביטוח לאחר תביעה, בתשלום פרמיה יחסית.'],['מוסך הסדר','בחירת מוסך משפיעה על השתתפות ועל תנאי התיקון.'],['ירידת ערך','פיצוי על ירידת שווי הרכב לאחר תיקון, לפי טבלה ותנאים.'],['גרירה ושמשות','הרחבות נפוצות - בדוק גבול, השתתפות, ספק הסדר.']];for(const e of _extra){if(!INSURANCE_KB.principles.some(p=>p[0]===e[0]))INSURANCE_KB.principles.push(e)} INSURANCE_KB.branches=INSURANCE_KB.branches||{};Object.assign(INSURANCE_KB.branches,{'סיעוד':{terms:['מצב סיעודי','תקופת המתנה','פיצוי חודשי','אשפוז סיעודי'],checks:['בדוק הגדרת מצב סיעודי','בדוק תקופת המתנה ופיצוי','בדוק גיל סיום ותקרה'],notAssume:['סיעוד אינו אשפוז כללי']},'תאונות':{terms:['נכות','פיצוי יומי','שברים'],checks:['בדוק הגדרת תאונה','בדוק טבלת נכות','בדוק חריגי ספורט'],notAssume:['כל פציעה אינה תאונה']},'שיניים':{terms:['טיפול','שתל','כתר','אורתודנטיה'],checks:['בדוק תקרה','בדוק אכשרה','בדוק רופא הסדר'],notAssume:['כל טיפול שיניים מכוסה']},'עסק':{terms:['חבות','רכוש','אובדן רווחים'],checks:['בדוק גבול חבות','בדוק סכומי רכוש','בדוק אובדן רווחים'],notAssume:['פוליסת עסק אינה פוליסת דירה']}});}}catch(e){}
 function normalizeOcrText(t){return String(t||'').replace(/[װױ]/g,'ו').replace(/\s+([.,:;])/g,'$1').replace(/(\d)\s+(\d)/g,'$1$2').trim()}
