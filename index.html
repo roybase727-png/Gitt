@@ -110,7 +110,7 @@ const keyOf=async(pw,s)=>{const m=await crypto.subtle.importKey('raw',enc.encode
 const db=()=>new Promise((ok,no)=>{const r=indexedDB.open('kaspet',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=no});
 const idbGet=async k=>{const d=await db();return new Promise((ok,no)=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>ok(q.result);q.onerror=no})};
 const idbSet=async(k,v)=>{const d=await db();return new Promise((ok,no)=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,k);t.oncomplete=ok;t.onerror=no})};
-const BUILD='8.1.0 · 15.11.2026 · Hybrid OCR + AI Recovery';
+const BUILD='8.3.0 · 15.11.2026 · Original UI + Offline Insurance Knowledge Engine';
 const TYPES={'רכב':'🚗','דירה':'🏠','בריאות':'🩺','שיניים':'🦷','חיים':'❤️','משכנתא':'🏦','נסיעות':'✈️','תאונות':'🛡️','סיעוד':'🧓','עסק':'🏢','ועד בית':'🏢','אחר':'📄'};
 const CO_LIST=['הראל','מגדל','הפניקס','כלל ביטוח','מנורה מבטחים','AIG ישראל','שירביט','ביטוח ישיר','הכשרה','איילון','ליברה','כללית','מכבי','מאוחדת','לאומית','פספורטכארד','הדר','שומרה','ווישור (WeSure)','9 מיליון','שלמה ביטוח','ביטוח חקלאי'];
 const INS_DB=[['הראל',['הראל','harel'],['harel-group.co.il','harel.co.il'],[]],['מגדל',['מגדל','migdal'],['migdal.co.il'],[]],['הפניקס',['הפניקס','פניקס','phoenix','fenix'],['fnx.co.il','phoenix.co.il'],[]],['כלל ביטוח',['כלל ביטוח','כלל חברה לביטוח','clal'],['clalbit.co.il','clal.co.il'],['clal']],['מנורה מבטחים',['מנורה מבטחים','מנורה','menora'],['menoramivt.co.il'],[]],['איילון',['איילון','ayalon'],['ayalon-ins.co.il'],[]],['הכשרה',['הכשרה','hachshara'],['hachshara.co.il'],[]],['שומרה',['שומרה','shomera'],['shomera.co.il'],[]],['שירביט',['שירביט','shirbit'],['shirbit.co.il'],[]],['AIG ישראל',['aig','איי איי ג׳י'],['aig.co.il'],[]],['ביטוח ישיר',['ביטוח ישיר','איי די איי','idi'],['555.co.il'],[]],['ליברה',['ליברה','libra'],['libra.co.il'],[]],['ווישור (WeSure)',['ווישור','wesure'],['wesure.co.il'],[]],['שלמה ביטוח',['שלמה ביטוח','shlomo'],['shlomo.co.il'],[]],['9 מיליון',['9 מיליון','9million'],[],[]],['ביטוח חקלאי',['ביטוח חקלאי'],[],[]],['הדר',['הדר חברה לביטוח','הדר ביטוח'],[],[]],['מכבי',['מכבי','maccabi'],['maccabi4u.co.il'],['מכבי']],['כללית',['כללית','clalit'],['clalit.co.il'],['כללית']],['מאוחדת',['מאוחדת','meuhedet'],['meuhedet.co.il'],[]],['לאומית',['לאומית'],['leumit.co.il'],['לאומית']],['פספורטכארד',['פספורטכארד','passportcard'],['passportcard.co.il'],[]]];
@@ -273,12 +273,31 @@ const merged=mergeFields(local,aiFields);
 showQC(file.name,docType,pages,text,merged,usedAI,coHit,aiError,aiFields);}
 
 function nextScan(){SCAN_CUR++;processNextScan()}
-function localExtract(text,coHit){const find=re=>{const m=text.match(re);return m?m[1].trim():''};
-const dateRe=/(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})|(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})/g;const dates=[...text.matchAll(dateRe)].map(m=>{if(m[1])return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;return `${m[6]}-${String(m[5]).padStart(2,'0')}-${String(m[4]).padStart(2,'0')}`});
-const premM=text.match(/פרמיה[^0-9]{0,20}([\d,]+\.?\d*)/)||text.match(/([\d,]+\.?\d*)\s*₪/);
-const numM=text.match(/מספר פוליסה[^0-9]{0,15}([0-9\-]{5,})/)||text.match(/פוליסה\s*(?:מס['’]?|מספר)?\s*[:#]?\s*([0-9\-]{5,})/);
-let freq='';if(/שנתי/.test(text))freq='שנתי';else if(/רבעוני/.test(text))freq='רבעוני';else if(/חצי שנתי/.test(text))freq='חצי שנתי';else if(/חודשי/.test(text))freq='חודשי';
-return{co:coHit?coHit.name:'',num:numM?numM[1]:'',start:dates[0]||'',end:dates[1]||dates[0]||'',prem:premM?premM[1].replace(/,/g,''):'',freq,ded:find(/השתתפות עצמית[^0-9]{0,25}([^\n]{0,60})/)||'',asset:find(/מספר רכב[^0-9]{0,10}([0-9\-]{5,})/)||'',cust:'',ins:'',prod:'',cl:find(/מוקד[^0-9]{0,20}([0-9*\- ]{7,})/)||'',cov:'',ex:'',note:''}}
+function localExtract(text,coHit){
+ const raw=String(text||'');const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+ const find=re=>{const m=raw.match(re);return m?String(m[1]).trim():''};
+ const cleanNum=x=>String(x||'').replace(/[,₪\s]/g,'');
+ const dateRe=/(20\d{2})[-/.](\d{1,2})[-/.](\d{1,2})|(\d{1,2})[-/.](\d{1,2})[-/.](20\d{2})/g;
+ const dates=[...raw.matchAll(dateRe)].map(m=>{const y=m[1]||m[6],mo=m[1]?m[2]:m[5],d=m[1]?m[3]:m[4];const yy=Number(y),mm=Number(mo),dd=Number(d);if(mm<1||mm>12||dd<1||dd>31)return'';return `${yy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`}).filter(Boolean);
+ const numPatterns=[/מספר\s*פוליסה\s*[:#]?\s*([A-Z0-9][A-Z0-9\-/]{4,})/i,/פוליסה\s*(?:מס['’׳]?|מספר)?\s*[:#]?\s*([0-9][0-9\-/]{4,})/i,/Policy\s*(?:No\.?|Number)?\s*[:#]?\s*([A-Z0-9][A-Z0-9\-/]{4,})/i];
+ let num='';for(const re of numPatterns){const m=raw.match(re);if(m){num=m[1];break}}
+ const premLine=lines.find(l=>/(פרמיה|דמי ביטוח|לתשלום|סה״כ לתשלום|סך לתשלום)/.test(l));
+ const premM=premLine?.match(/([\d,]+(?:\.\d{1,2})?)/)||raw.match(/פרמיה[^\d]{0,25}([\d,]+(?:\.\d{1,2})?)/);
+ let freq='';const freqLine=lines.find(l=>/(פרמיה|תשלום|דמי ביטוח)/.test(l)&&/(שנתי|לשנה|חודשי|לחודש|רבעוני|חצי שנתי)/.test(l))||'';
+ const ft=(freqLine+' '+raw.slice(0,6000));if(/חצי שנתי/.test(ft))freq='חצי שנתי';else if(/רבעוני/.test(ft))freq='רבעוני';else if(/שנתי|לשנה|פרמיה שנתית/.test(ft))freq='שנתי';else if(/חודשי|לחודש/.test(ft))freq='חודשי';
+ const co=coHit?coHit.name:'';
+ const start=find(/(?:תחילת|מועד תחילת|מתאריך|תקופת הביטוח מ)[^\n\d]{0,25}(\d{1,2}[./-]\d{1,2}[./-]20\d{2}|20\d{2}[./-]\d{1,2}[./-]\d{1,2})/);
+ const end=find(/(?:תום|סיום|עד תאריך|עד ליום|בתוקף עד)[^\n\d]{0,25}(\d{1,2}[./-]\d{1,2}[./-]20\d{2}|20\d{2}[./-]\d{1,2}[./-]\d{1,2})/);
+ const phone=find(/(?:מוקד תביעות|מוקד שירות|טלפון לתביעות|טל׳)[^\n]{0,35}([0-9*# -]{7,})/);
+ const type=classifyPolicyType(raw,'').type;const evidence=analyzeLocalKnowledge(raw,type);
+ const insuredLine=lines.find(l=>/(שם המבוטח|המבוטח|בעל הפוליסה|שם הלקוח)/.test(l)&&l.length<180)||'';
+ const assetLine=lines.find(l=>/(מספר רכב|כתובת הנכס|הנכס המבוטח|פרטי הרכוש)/.test(l)&&l.length<180)||'';
+ const dedLines=lineEvidence(raw,['השתתפות עצמית','סכום ההשתתפות']);
+ const productLine=lines.find(l=>/(שם התכנית|שם המוצר|תכנית ביטוח|מסלול ביטוח)/.test(l)&&l.length<180)||'';
+ return {co,num,start:start?normalizeDateText(start):dates[0]||'',end:end?normalizeDateText(end):dates[1]||dates[0]||'',prem:premM?cleanNum(premM[1]):'',freq,ded:dedLines.join('\n'),asset:assetLine,cust:insuredLine,ins:'',prod:productLine,cl:phone,cov:evidence.cov.join('\n'),ex:evidence.ex.join('\n'),note:[...evidence.flags,...evidence.checks].join('\n'),type};
+}
+function normalizeDateText(s){const m=String(s||'').match(/(\d{1,2})[./-](\d{1,2})[./-](20\d{2})|(20\d{2})[./-](\d{1,2})[./-](\d{1,2})/);if(!m)return'';const y=m[3]||m[4],mo=m[3]?m[2]:m[5],d=m[3]?m[1]:m[6];return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+
 function mergeFields(local,ai){const fields=[];const labels={co:'חברת ביטוח',num:'מספר פוליסה',start:'תחילת תוקף',end:'תאריך סיום',prem:'פרמיה',freq:'תדירות תשלום',ded:'השתתפות עצמית',asset:'פריט מבוטח',cust:'בעל הפוליסה',ins:'מבוטחים',prod:'שם המוצר',cl:'מוקד תביעות'};
 for(const k of Object.keys(labels)){let v='',status='missing',conf=0,page='';
 if(ai&&ai[k]!=null&&String(ai[k]).trim()){v=String(ai[k]);status=ai._meta&&ai._meta[k]&&ai._meta[k].status?ai._meta[k].status:'explicit';conf=ai._meta&&ai._meta[k]&&ai._meta[k].conf!=null?ai._meta[k].conf:85;page=ai._meta&&ai._meta[k]&&ai._meta[k].page?ai._meta[k].page:''}
@@ -316,7 +335,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 const doc=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let all='',ocrCount=0;
 for(let i=1;i<=doc.numPages;i++){
  const pg=await doc.getPage(i);const tc=await pg.getTextContent();
- let pageText=tc.items.map(x=>x.str||'').join(' ').replace(/\s+/g,' ').trim();
+ // Preserve line structure and reading order as in the original vault; flattening
+ // all PDF text items into one line damages tables, headings and policy schedules.
+ const lines={};for(const it of tc.items){const y=Math.round(it.transform?.[5]||0);(lines[y]=lines[y]||[]).push(it.str||'')}
+ let pageText=Object.keys(lines).sort((a,b)=>Number(b)-Number(a)).map(y=>lines[y].join(' ').trim()).filter(Boolean).join('\n').trim();
  // Scanned PDFs often contain no selectable text. OCR only pages that need it.
  if(pageText.replace(/\s/g,'').length<60){
   try{
@@ -421,8 +443,8 @@ function settingsV(){return `<div class="card"><h3>גרסה ועדכון</h3><di
 <div class="mut"><b>Face ID / ביומטריה:</b> פתיחה במכשיר בלבד. אינה מצפינה את הכספת ואינה מחליפה סיסמה. ההצפנה תמיד AES-GCM עם מפתח הנגזר מהסיסמה.</div>
 <div class="row" style="margin-top:10px"><button class="btn sm" onclick="fidOn()">הפעל Face ID</button><button class="btn o sm" onclick="fidOff()">כבה Face ID</button><button class="btn o sm" onclick="lock()">נעל כספת</button></div>
 <label style="margin-top:12px">נעילה אוטומטית לאחר חוסר פעילות (דקות)</label><select id="al" onchange="setAutoLock(this.value)">${[1,2,5,10,30].map(m=>`<option ${S.settings.autoLockMin===m?'selected':''}>${m}</option>`).join('')}</select>
-<label><input type="checkbox" id="lo2" ${S.settings.localOnly?'checked':''} onchange="toggleLocalOnly(this.checked)" style="width:auto"> מצב מקומי בלבד — ללא שליחת תוכן המסמך לשירות AI חיצוני</label>
-<div class="small">במצב מקומי בלבד המסמך אינו נשלח ל-AI. ספריות PDF/OCR עשויות להיטען מהאינטרנט, אך העיבוד של הקובץ מתבצע במכשיר.</div></div>
+<label><input type="checkbox" id="lo2" ${S.settings.localOnly?'checked':''} onchange="toggleLocalOnly(this.checked)" style="width:auto"> מצב מקומי בלבד — ללא שליחת מסמכים לשירות חיצוני</label>
+<div class="small">כאשר מצב מקומי בלבד פעיל, סריקת AI וספריות PDF/OCR חיצוניות חסומות. ייבוא טקסט שהודבק עדיין עובד.</div></div>
 <div class="card"><h3>הגדרות AI</h3><label>ספק ברירת מחדל</label><select id="aiProv" onchange="setProv(this.value)">${['gemini','groq','claude'].map(x=>`<option ${S.settings.aiProvider===x?'selected':''}>${x}</option>`).join('')}</select>
 <label>מפתח ${S.settings.aiProvider}</label><input id="aiKey" type="password" placeholder="הדבק מפתח — נשמר מוצפן בכספת" value="${esc(S.settings.aiKeys[S.settings.aiProvider]||'')}"><button class="btn" onclick="saveKey()">שמור מפתח</button>
 <div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div></div>
@@ -456,7 +478,7 @@ async function askAI(){const q=$('#evt').value.trim();if(!q)return toast('כתו
 if(!confirm(`לשלוח שאלה ל־AI (${S.settings.aiProvider})? השאלה תכלול תקצירי פוליסות בלבד, לא מסמכים מלאים.`))return;const out=$('#evr');out.textContent='שואל את ה־AI…';try{const ctx=S.p.map(p=>({id:p.id,co:p.co,type:p.type,num:p.num,asset:p.asset,end:p.end,cov:(p.cov||'').slice(0,1200),ex:(p.ex||'').slice(0,600)}));const ans=await AI(`ענה בעברית על השאלה: ${q}\nפוליסות:\n${JSON.stringify(ctx,null,1)}\nהחזר JSON: {verdict, summary, matches:[{id,v,why,steps:[]}], urgent, missing}. אל תמציא. אם לא ברור כתוב לא ברור.`);const o=JSON.parse(ans.match(/\{[\s\S]*\}/)[0]);out.innerHTML=`<div class="card"><b>${esc(o.verdict||'לא ברור')}</b><div>${esc(o.summary||'')}</div>${(o.matches||[]).map(m=>{const p=P(m.id);return p?`<div style="margin-top:10px"><b>${esc(m.v)} · ${esc(p.co)} · ${esc(p.type)}</b><div class="mut">${esc(m.why||'')}</div><div class="mut">${(m.steps||[]).join(' · ')}</div><button class="btn sm" onclick="openPolicy('${p.id}')">פתח פוליסה</button></div>`:''}).join('')}<div class="mut" style="margin-top:8px">ניתוח אוטומטי בלבד. ההחלטה הסופית בידי המבטח.</div></div>`}catch(e){out.textContent='החיפוש נכשל ('+String(e.code||e.message||'שגיאה')+')'}}
 async function claimDoc(id){const c=S.claims.find(x=>x.id===id);if(!c)return;if(S.settings.localOnly)return toast('במצב מקומי בלבד AI חסום.');if(!confirm(`לשלוח את פרטי האירוע ל־AI (${S.settings.aiProvider}) לצורך ניסוח כתב תביעה?`))return;const out=$('#claimDocOut');out.textContent='כותב…';try{const txt=await AI(`כתוב כתב תביעה רשמי בעברית לחברת ביטוח. אירוע: ${c.title} בתאריך ${c.date}. תיאור: ${c.note}. פוליסות: ${JSON.stringify((c.policyIds||[]).map(i=>P(i)).filter(Boolean).map(p=>({co:p.co,type:p.type,num:p.num})))}. מבנה: נושא, פנייה, פרטי פוליסה, תיאור, כיסויים רלוונטיים, בקשה לפתיחת תביעה ורשימת מסמכים. אל תמציא עובדות. כתוב טקסט רגיל בלבד.`);out.innerHTML=`<textarea rows="14" style="margin-top:10px">${esc(txt)}</textarea><button class="btn" onclick="cp(document.querySelector('#claimDocOut textarea').value)">העתק כתב תביעה</button>`}catch(e){out.textContent='ההפקה נכשלה'}}
 async function aiExtractTyped(text,fileName){const prompt=`חילוץ מובנה מפוליסת ביטוח בעברית. החזר JSON בלבד: {"co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","_meta":{"co":{"status":"explicit|inferred|missing","conf":0,"page":""},"num":{"status":"explicit|inferred|missing","conf":0,"page":""},"end":{"status":"explicit|inferred|missing","conf":0,"page":""},"prem":{"status":"explicit|inferred|missing","conf":0,"page":""},"freq":{"status":"explicit|inferred|missing","conf":0,"page":""}}}. תאריכים YYYY-MM-DD. freq רק: חודשי/שנתי/רבעוני/חצי שנתי או ריק אם לא זוהה. אל תמציא. מסמך:\n${text.slice(0,50000)}`;const raw=await AI(prompt);const m=raw.match(/\{[\s\S]*\}/);if(!m)throw new Error('תשובת AI לא תקינה');return JSON.parse(m[0])}
-async function fetchWithTimeout(url,options={},timeoutMs=22000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal})}catch(e){if(e.name==='AbortError')throw{code:'פסק זמן: ספק ה-AI לא השיב בתוך 22 שניות'};throw{code:'שגיאת רשת: '+(e.message||'אין תגובה מהשרת')}}finally{clearTimeout(timer)}}
+async function fetchWithTimeout(url,options={},timeoutMs=65000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal})}catch(e){if(e.name==='AbortError')throw{code:'פסק זמן: ספק ה-AI לא השיב בתוך 65 שניות'};throw{code:'שגיאת רשת: '+(e.message||'אין תגובה מהשרת')}}finally{clearTimeout(timer)}}
 async function aiRequest(prov,key,prompt){
  const headers={'Content-Type':'application/json'};
  if(prov==='gemini'){
@@ -468,8 +490,15 @@ async function aiRequest(prov,key,prompt){
   throw{code:last||'Gemini לא החזיר תשובה'}
  }
  if(prov==='groq'){
-  const models=['llama-3.3-70b-versatile','llama-3.1-8b-instant'];let last='';
-  for(const model of models){try{const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0})});const j=await r.json().catch(()=>({}));if(!r.ok){last='Groq '+model+': '+(j.error?.message||r.status);if([400,404].includes(r.status))continue;throw{code:last}}const a=j.choices?.[0]?.message?.content||'';if(a.trim())return a;last='Groq החזיר תשובה ריקה'}catch(e){last=String(e.code||e.message||e);if(/פסק זמן/.test(last))break}}
+  // Groq retired llama-3.3-70b-versatile and llama-3.1-8b-instant on 2026-08-16.
+  // Use currently listed production GPT-OSS models and strict JSON mode.
+  const models=['openai/gpt-oss-120b','openai/gpt-oss-20b'];let last='';
+  for(const model of models){try{
+   const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0,reasoning_effort:'medium',max_completion_tokens:8000,response_format:{type:'json_object'}})});
+   const j=await r.json().catch(()=>({}));
+   if(!r.ok){last='Groq '+model+': '+(j.error?.message||r.status);if([400,404,422].includes(r.status))continue;throw{code:last}}
+   const a=j.choices?.[0]?.message?.content||'';if(a.trim())return a;last='Groq '+model+' החזיר תשובה ריקה';
+  }catch(e){last=String(e.code||e.message||e);if(/פסק זמן/.test(last))break}}
   throw{code:last||'Groq לא החזיר תשובה'}
  }
  if(prov==='claude'){
@@ -901,37 +930,122 @@ function fixAllTypes(){
   saveQuiet().then(()=>{ toast('תוקנו '+changed.length+' פוליסות'); render(); });
   return changed;
 }
-const POLICY_KNOWLEDGE = {
-  'רכב': {covers:['חובה','מקיף','צד ג','שמשות','גרירה','רכב חליפי'], checks:['האם יש כיסוי שמשות?','האם יש רכב חליפי?','מה ההשתתפות במקיף ובצד ג?','האם נהג צעיר / חדש מכוסה?'], gaps:['נהג לא מורשה','נהיגה ללא רישיון','שימוש עסקי']},
-  'דירה': {covers:['מבנה','תכולה','נזקי מים','צד ג','אובדן שכר דירה'], checks:['האם מבנה ותכולה מכוסים?','מה סכום המבנה - האם מעודכן למדד?','האם יש כיסוי נזקי מים?','מה ההשתתפות ברעידת אדמה?'], gaps:['פל-קל','עבודות בחום','רכוש מחוץ לדירה']},
-  'ועד בית': {covers:['רכוש משותף','נזקי מים משותפים','צד ג משותף','חברי ועד','חבות מעבידים'], checks:['האם זה טיוטה או פוליסה סופית?','האם פונים רק לש.ח.ר בצנרת?','האם יש עמדות טעינה עם אישורים?','האם יש חריג פל-קל?'], gaps:['דירה פרטית','תכולה פרטית','אובדן שכר דירה']},
-  'בריאות': {covers:['ניתוחים','תרופות','השתלות','מחלות קשות','אמבולטורי'], checks:['תקופת אכשרה?','החרגות קיימות?','האם יש השתתפות עצמית?'], gaps:['מצב רפואי קיים','טיפולים בחו"ל']},
-  'חיים': {covers:['ריסק','חיסכון','קצבה'], checks:['סכום ריסק מספיק?','מוטבים מעודכנים?'], gaps:['התאבדות בשנה ראשונה','עיסוק מסוכן']},
-  'נסיעות': {covers:['רפואי בחו"ל','ביטול','כבודה','איתור וחילוץ'], checks:['האם יש מצב רפואי קיים?','האם יש ספורט אתגרי?'], gaps:['ספורט אתגרי','הריון מתקדם']},
-  'משכנתא': {covers:['מבנה','חיים למשכנתא'], checks:['סכום תואם ליתרת המשכנתא?'], gaps:['תכולה']},
-  'אחר': {covers:[], checks:['מה הסוג האמיתי של הפוליסה?','בדוק את שם המוצר'], gaps:[]}
+/* מאגר ידע ביטוחי מקומי — גרסת 1.0. ידע כללי אינו תנאי פוליסה ואינו הוכחת כיסוי. */
+const INSURANCE_KB = {
+ version:'1.0', updated:'2026-11', jurisdiction:'ישראל',
+ principles:[
+  ['סכום ביטוח','תקרה/בסיס חישוב חוזי לפי תנאי הכיסוי; אינו בהכרח סכום שישולם אוטומטית. יש לבדוק שיטת שיפוי, תת-גבול, הצמדה והוכחת נזק.'],
+  ['גבול אחריות','תקרה לחבות כלפי צד שלישי או חבות אחרת; אינה זהה לסכום ביטוח רכוש. לבדוק אם הגבול הוא למקרה, לתקופה או במצטבר.'],
+  ['ערך כינון','עלות הקמה או רכישה מחדש של רכוש חדש בהתאם לתנאי הפוליסה, ולא שווי שוק/שווי מכירה. לבדוק תנאי כינון בפועל, לוחות זמנים והוכחת הוצאה.'],
+  ['ערך שיפוי','שווי הנכס לפני מקרה הביטוח, תוך התחשבות בבלאי/פחת ככל שנקבע. אין להניח כינון אם לא נרשם.'],
+  ['השתתפות עצמית','הסכום/שיעור שהמבוטח נושא בו. עשויות להיות השתתפויות שונות לפרקים, אירועים, ספקים או נזקי טבע.'],
+  ['ביטוח חסר','מצב שבו סכום הביטוח נמוך מהשווי/הערך הרלוונטי לפי תנאי החוזה; לבדוק אם חל מנגנון יחסי ובאילו חריגים.'],
+  ['ביטוח יתר','סכום ביטוח גבוה מהשווי הרלוונטי אינו מבטיח תגמול עודף; בביטוח שיפוי התשלום כפוף לנזק ולתנאי החוזה.'],
+  ['תת-גבול','מגבלה פנימית לכיסוי מסוים הנמוכה מהסכום הכללי; יש לחלץ גם את הכיסוי וגם את תת-הגבול.'],
+  ['חריג','סיכון/נסיבה/רכוש שהוחרגו. יש להבחין בין חריג כללי, חריג לפרק, סייג והרחבה שמחזירה כיסוי חלקי.'],
+  ['תקופת אכשרה','פרק זמן מתחילת הביטוח שבו כיסוי מסוים עדיין אינו חל, ככל שנקבע בפוליסה.'],
+  ['תקופת המתנה','זמן ממועד אירוע/תחילת מצב ועד תחילת זכאות לתגמול, בעיקר בכיסויי אובדן הכנסה/סיעוד.'],
+  ['מוטב','מי שזכאי לקבל תגמולי ביטוח לפי מינוי/דין/תנאי חוזה; אינו בהכרח בעל הפוליסה או המבוטח.'],
+  ['מוטב בלתי חוזר','מינוי שמוגבל לשינוי לפי התנאים והדין; יש לבדוק נוסח מדויק ואישור המוטב.'],
+  ['שעבוד','זכות של נושה בנכס/בתגמולים לפי מסמך השעבוד. אין להסיק את סדר התשלום בלי לקרוא את סעיף השעבוד.'],
+  ['הצמדה למדד','עדכון סכומים לפי מדד מוגדר ובסיס/מועד שנקבעו; יש לזהות איזה סכום מוצמד ולאיזה מדד.'],
+  ['כפל ביטוח','קיומם של חוזים חופפים; משמעותו תלויה בסוג הביטוח, באופי השיפוי/פיצוי ובדין. עצם קיום שתי פוליסות אינו מוכיח כפל בר-תשלום.'],
+  ['חובת גילוי','חובות המבוטח ביחס לשאלות/מידע מהותי בעת ההצטרפות ובהתאם לחוק ולתנאי החוזה. אין להסיק הפרה מעצם קיום אי-התאמה.'],
+  ['הודעה על מקרה ביטוח','יש לבדוק את מועד ההודעה, דרישות המסמכים, שיתוף פעולה והשלכות איחור לפי החוק והפוליסה; אין לקבוע דחייה אוטומטית.'],
+  ['שיפוי','תשלום שמטרתו לפצות על נזק בהתאם להיקף הנזק ולתנאים, בכפוף לתקרות/חריגים.'],
+  ['פיצוי מוסכם/סכומי','תגמול בסכום שנקבע מראש בקרות אירוע מזכה, בכפוף להגדרת האירוע ולתנאים.'],
+  ['מקרה ביטוח','האירוע או הנסיבה שהוגדרו בחוזה כמזכים בכיסוי; יש לבדוק את ההגדרה, מועד התרחשותה והחריגים.'],
+  ['חבות','אחריות משפטית של המבוטח כלפי צד שלישי; עצם קיומו של נזק אינו מוכיח חבות.'],
+  ['תחלוף','זכות המבטח להיכנס בנעלי המבוטח ולפעול מול צד שלישי לאחר תשלום תגמולים, בכפוף לדין ולתנאים.'],
+  ['כינון','השבת רכוש למצב/ערך חדש לפי התנאים; יש להבחין בין התחייבות לכינון לבין תשלום ראשוני או מותנה.'],
+  ['אובדן גמור','הגדרה חוזית/רגולטורית של נזק לרכב שבו מתקיימים תנאים מסוימים; יש לבדוק את ההגדרה והחישוב בפוליסה.'],
+  ['אובדן להלכה','סיווג נזק לרכב לפי תנאי הפוליסה והדין; אין להניח שהוא זהה לאובדן גמור.'],
+  ['גבול אחריות למקרה','תקרת הכיסוי לאירוע יחיד; יש לבדוק אם קיימת גם תקרה שנתית/מצטברת.'],
+  ['גבול אחריות מצטבר','תקרת תשלום לכל תקופת הביטוח או לכלל התביעות, לפי הנוסח.'],
+  ['בסיס הגשת תביעה','האם הכיסוי חל לפי מועד קרות האירוע או לפי מועד הגשת התביעה/דיווח, בהתאם לנוסח.'],
+  ['מועד רטרואקטיבי','תאריך שממנו ואילך אירועים עשויים להיות מכוסים בפוליסה על בסיס הגשת תביעה; יש לבדוק רצף ותנאי גילוי.'],
+  ['תקופת גילוי','חלון זמן לאחר תום הכיסוי שבו ניתן לדווח על תביעה בגין אירוע/מעשה בתקופת הביטוח, אם נרכש/נקבע.'],
+  ['אחריות צולבת','הרחבה שעשויה להתייחס למבוטחים שונים כאילו הוצאה לכל אחד בנפרד, בכפוף לתנאים.'],
+  ['הוצאות הגנה','הוצאות משפטיות/הגנה שעשויות להיות בתוך גבול האחריות או בנוסף לו; יש לבדוק במפורש.'],
+  ['הוצאות משפטיות','הוצאות הקשורות לניהול הליך או הגנה; אופן הכיסוי, בחירת עורך דין ואישור מראש תלויים בנוסח.'],
+  ['חריג מלחמה','סייג הנוגע למלחמה/פעולות איבה/טרור או סיכון דומה; ההגדרה והחריגים משתנים בין ענפים ופוליסות.'],
+  ['חריג טרור','החרגה או הגבלה הנוגעת לפעולות טרור; יש לבדוק אם קיימת הרחבה מפורשת או כיסוי סטטוטורי.'],
+  ['חריג רשלנות','אין להסיק שכל רשלנות מוחרגת; יש לקרוא את ההגדרה והקשר הכיסוי המדויק.'],
+  ['מיגון','אמצעי הגנה שהוגדרו כתנאי או דרישה; יש לזהות את האמצעי, המועד, תחזוקה והשלכות אי-קיום.'],
+  ['תנאי מוקדם','דרישה חוזית שעשויה להשפיע על תחולת כיסוי; יש להבחין בינה לבין חובת פעולה לאחר אירוע.'],
+  ['הרחבה','שינוי/תוספת להיקף הכיסוי הבסיסי; יש לבדוק גבול, השתתפות, תקופה וחריגים ייחודיים.'],
+  ['נספח','מסמך המשנה/מוסיף תנאים או פרטים; יש לוודא שהוא משויך לאותה פוליסה ולתקופה הרלוונטית.'],
+  ['דף פרטי ביטוח','רשימת פרטים פרטנית: מבוטח, תקופה, פרמיה, סכומים, כתובת והרחבות; אינו בהכרח כולל את כל תנאי החוזה.'],
+  ['רשימה','מסמך פרטי הפוליסה; יש לקרוא יחד עם תנאים כלליים, מפרט, נספחים והצעה ככל שהם חלק מהחוזה.'],
+  ['הצעת ביטוח','מסמך הצעה/חיתום שאינו בהכרח אישור קבלה או פוליסה בתוקף.'],
+  ['אישור קיום ביטוח','אישור תמציתי המעיד על פרטים מסוימים; אינו בהכרח משנה את הפוליסה או כולל את כל תנאיה.'],
+  ['רצף ביטוחי','המשכיות הכיסוי בין תקופות/מבטחים; יש לבדוק הפסקות, שינויי תנאים, חיתום ואכשרה.'],
+  ['חידוש','המשך לתקופת ביטוח חדשה, לעיתים עם שינוי פרמיה/תנאים; אין להניח שכל תנאי התקופה הקודמת נותרו.'],
+  ['ביטול פוליסה','סיום חוזה לפני תום התקופה; יש לבדוק מועד כניסה לתוקף, הודעות, החזר פרמיה והשלכות שעבוד.'],
+  ['פרמיה','דמי הביטוח לתקופה או לתשלום מסוים; יש לזהות אם הסכום שנקלט הוא שנתי, חודשי, תשלום ראשון או סך כולל.'],
+  ['פרמיה משתנה','תשלום שעשוי להשתנות לפי גיל, תקופה, מדד או מנגנון אחר; יש לזהות לוח/שיעור שינוי.'],
+  ['פרמיה נטו','רכיב פרמיה לפני רכיבים/תוספות מסוימים; אין להשוות אוטומטית לסכום לתשלום.'],
+  ['דמי אשראי','תוספת בגין פריסת תשלומים/אשראי, ככל שמופיעה; יש להפריד מהפרמיה הביטוחית.'],
+  ['תוספת חיתומית','תוספת מחיר או תנאי שנקבעו בעקבות הערכת סיכון; יש לקרוא את נספח החיתום.'],
+  ['החרגה אישית','סייג החל על מבוטח מסוים או מצב/איבר/עיסוק מסוים; לא בהכרח חל על יתר המבוטחים.'],
+  ['הצהרת בריאות','תשובות המבוטח לשאלות חיתום; יש להשוות רק מול המסמך המלא ולא להסיק אי-גילוי מהיעדר שדה.'],
+  ['מוטב לפי דין','זהות מוטב שנקבעת לפי הוראות הדין/החוזה כשאין מינוי תקף; נדרש בירור משפטי לפי נסיבות.'],
+  ['ביטוח קבוצתי','כיסוי במסגרת קבוצה/מעסיק/ארגון; יש לבדוק מי בעל הפוליסה, מי זכאי להצטרף ומה קורה בעזיבת הקבוצה.'],
+  ['פוליסת פרט','חוזה ביטוח אישי; תנאים, חיתום וזכויות עשויים להיות שונים מביטוח קבוצתי.'],
+  ['שב״ן','שירותי בריאות נוספים של קופת חולים; אין לזהותם עם פוליסת ביטוח פרטית ויש לבדוק את תיאום הכיסויים.']
+ ],
+ sources:[
+  {name:'חוק חוזה הביטוח, התשמ״א–1981',url:'https://he.wikisource.org/wiki/חוק_חוזה_הביטוח',note:'מקור חקיקתי כללי; יש לבדוק נוסח מעודכן ורשומות.'},
+  {name:'תקנות תנאי חוזה לביטוח דירות ותכולתן',url:'https://he.wikisource.org/wiki/תקנות_הפיקוח_על_עסקי_ביטוח_(תנאי_חוזה_לביטוח_דירות_ותכולתן)',note:'פוליסה תקנית לדירה ותכולה והרחבות.'},
+  {name:'רשות שוק ההון – שאלות ותשובות ביטוח כללי, בריאות וחיים',url:'https://www.gov.il/he/pages/general-insurance',note:'הסברים לציבור בנושאי ביטוח.'},
+  {name:'רשות שוק ההון – הוראות בנושא ניתוחים משלים שב״ן',url:'https://www.gov.il/he/pages/press_0049',note:'מידע על רפורמת הניתוחים והעברת מבוטחים.'}
+ ],
+ branches:{
+  'רכב':{terms:['ביטוח חובה','ביטוח מקיף','צד שלישי','נזק עצמי','ירידת ערך','רכב חלופי','גרירה','שמשות','מראות ופנסים','נהג צעיר','נהג חדש','מוסך הסדר','כינון נזק','אובדן גמור','אובדן להלכה','רעידת אדמה','מהומות'],checks:['לבדוק מי רשאי לנהוג: נקוב בשם או כל נהג; גיל/ותק; שימוש פרטי/עסקי.','להפריד בין חובה (נזקי גוף) לבין רכוש: מקיף/צד ג׳.','לבדוק גבול אחריות לצד ג׳, השתתפות עצמית, מוסך הסדר והפחתה/היעדר הפחתה.','לבדוק הרחבות: גרירה, שמשות, רכב חלופי, הגנה משפטית, אביזרים ותוספות.','לבדוק הגדרות אובדן גמור/להלכה, שרידים, ירידת ערך ותנאי מיגון.'],notAssume:['נהג שאינו עומד בתנאי הגיל/ותק','שימוש שאינו תואם הצעה/פוליסה','אביזרים שלא נרשמו','כיסוי צד ג׳ אינו כיסוי לנזק לרכב המבוטח']},
+  'דירה':{terms:['ביטוח מבנה','ביטוח תכולה','רעידת אדמה','נזקי מים','צנרת','אחריות כלפי צד שלישי','אובדן שכר דירה','ערך כינון','ביטוח חסר','רכוש מחוץ לדירה','תכשיטים','כל הסיכונים'],checks:['להבחין בין מבנה לתכולה ולבדוק אם אחד מהם בלבד נרכש.','במבנה: לבדוק בסיס סכום הביטוח, שטח, עלות בנייה, הצמדה וערך כינון.','במים: לבדוק שרברב הסדר/פרטי, איתור נזילה, תיקון מקור הנזק, נזקי איטום, קורוזיה ובלאי.','בצד ג׳: לבדוק גבול אחריות, חריגים, בני בית/עובדים ורכוש בשליטה.','בתכולה: לבדוק פריטים מיוחדים, תכשיטים, דברי ערך, מחוץ לדירה ותתי-גבולות.','ברעידת אדמה: לבדוק אם הכיסוי נרכש/בוטל ומה ההשתתפות העצמית.'],notAssume:['ביטוח מבנה אינו מבטח אוטומטית תכולה','סכום מבנה אינו שווי שוק של הדירה','סכום בדף הרשימה אינו בהכרח ערך מוסכם','כיסוי מים אינו בהכרח כולל תיקון בלאי/איטום']},
+  'ועד בית':{terms:['רכוש משותף','אחריות ועד הבית','חבות מעבידים','צד שלישי','חניון','מעליות','מערכות סולאריות','עמדות טעינה','צנרת משותפת','שבר זכוכית'],checks:['לבדוק מי מוגדר כמבוטח: נציגות, בעלי דירות, חברת ניהול או גורם נוסף.','להפריד בין רכוש משותף לבין רכוש פרטי בדירות.','לבדוק גבולות אחריות לצד ג׳, חבות מעבידים, אחריות אישית של חברי ועד והרחבות.','לבדוק אם מעליות, חניון, שערים, מתקנים, גינות ועמדות טעינה נכללו במפורש.','לבדוק תנאי מיגון, תחזוקה, בדיקות תקופתיות, רישוי והחרגות.','לבדוק מי נותן שירותי צנרת, האם קיימת השתתפות עצמית נפרדת והאם הכיסוי כולל איתור ותיקון.'],notAssume:['פוליסת ועד אינה מחליפה ביטוח דירה פרטי','חבות ועד אינה בהכרח חבות חברת הניהול','מתקן/עמדת טעינה אינם מכוסים רק משום שהם בשטח הבניין']},
+  'בריאות':{terms:['ניתוחים','משלים שב״ן','שקל ראשון','תרופות מחוץ לסל','השתלות','טיפולים מיוחדים בחו״ל','אמבולטורי','ייעוץ ובדיקות','מחלות קשות','מצב רפואי קודם','החרגה רפואית','תקופת אכשרה','תקרה שנתית','רופא מומחה'],checks:['להבחין בין פוליסת פרט/קבוצתית ובין פרקי כיסוי שונים.','בניתוחים בישראל: לזהות שקל ראשון או משלים שב״ן, מועד תחולה, ספקים והשתתפות עצמית.','בתרופות: לבדוק הגדרת תרופה, התוויה, תקרה, השתתפות עצמית ומנגנון אישור.','בהשתלות/טיפולים בחו״ל: לבדוק תנאי זכאות, ספקים, תקרות והוצאות נלוות.','לבדוק הצהרת בריאות, החרגות אישיות, תוספות חיתומיות, אכשרה ורצף ביטוחי.','לבדוק אם הכיסוי הוא שיפוי או פיצוי ומה נדרש להוכחת הוצאה/אירוע.'],notAssume:['כיסוי בריאות פרטי אינו בהכרח מכסה כל טיפול','קיום שב״ן אינו מוכיח שקיים כיסוי משלים מסוים','רשימת כיסויים כללית אינה מחליפה נספח אישי/החרגות']},
+  'חיים':{terms:['ריסק','סכום ביטוח למקרה מוות','מוטבים','מוטב בלתי חוזר','ביטוח חיים למשכנתא','ערך מסולק','פרמיה משתנה','פרמיה קבועה','חיתום רפואי','חריג התאבדות'],checks:['לבדוק מי המבוטח ומי בעל הפוליסה ומיהם המוטבים.','לבדוק סכום ביטוח, תקופה, הצמדה, מסלול פרמיה ושינויים עתידיים.','במשכנתא: לזהות בנק/מוטב, יתרת חוב, סכום ביטוח והאם קיימת המחאת זכויות.','לבדוק החרגות/תוספות חיתומיות, עיסוק, עישון ומצב רפואי לפי המסמכים.','להבחין בין ריסק טהור לבין מוצר הכולל חיסכון.'],notAssume:['מוטב אינו בהכרח יורש','סכום הביטוח אינו בהכרח יתרת המשכנתא','אין להסיק כיסוי למקרה מסוים בלי הגדרת מקרה הביטוח']},
+  'משכנתא':{terms:['ביטוח מבנה למשכנתא','ביטוח חיים למשכנתא','בנק מוטב','שעבוד','מוטב בלתי חוזר','יתרת הלוואה','סכום ביטוח מבנה','אישור קיום ביטוח'],checks:['לבדוק אם נדרשים שני רכיבים: חיים ומבנה, והאם שניהם קיימים.','לבדוק שם הבנק, מספר הלוואה, מוטב/שעבוד והיקף הזכויות.','במבנה: לבדוק סכום לפי עלות הקמה מחדש ולא מחיר הדירה, בהתאם לדרישות המלווה.','לבדוק התאמה בין תוקף הפוליסה לתקופת ההלוואה והאם נדרש אישור חידוש.'],notAssume:['שעבוד אינו אומר שכל תגמול משולם לבנק בכל מצב','ביטוח חיים למשכנתא אינו ביטוח חיים משפחתי מלא']},
+  'נסיעות':{terms:['הוצאות רפואיות בחו״ל','איתור וחילוץ','כבודה','ביטול נסיעה','קיצור נסיעה','מצב רפואי קודם','הריון','ספורט אתגרי','החמרה רפואית','השתתפות עצמית'],checks:['לבדוק מדינות, תאריכים, גילאים ומספר נוסעים.','לבדוק הרחבה למצב רפואי קיים, הריון, ספורט/פעילות אתגרית ועבודה.','לבדוק תקרות רפואיות, פינוי, איתור וחילוץ, צד ג׳ וכבודה.','ביטול/קיצור: לבדוק סיבות מזכות, מועד רכישה, אסמכתאות וחריגים.'],notAssume:['כיסוי רפואי אינו מבטיח כיסוי למצב רפואי קודם','כבודה אינה מכסה אוטומטית כל פריט/מלוא שוויו']},
+  'תאונות':{terms:['נכות מתאונה','מוות מתאונה','אי כושר זמני','פיצוי יומי','שברים וכוויות','תאונה אישית','הגדרת תאונה'],checks:['לבדוק הגדרת תאונה, תקופת הביטוח, גיל סיום וחריגי פעילות.','להפריד בין פיצוי חד-פעמי לנכות לבין פיצוי יומי/הוצאות.','לבדוק טבלת אחוזי נכות, סף נכות, תקופת המתנה ותקרות.'],notAssume:['תאונה אינה בהכרח כוללת מחלה','נכות רפואית אינה תמיד זהה לנכות המזכה לפי הפוליסה']},
+  'סיעוד':{terms:['מצב סיעודי','ADL','תשישות נפש','תקופת המתנה','תגמול חודשי','תקופת פיצוי','שיפוי','פיצוי'],checks:['לבדוק הגדרת מצב סיעודי ופעולות ADL הנדרשות.','לבדוק אם נדרשת אי-יכולת במספר פעולות או תשישות נפש.','לבדוק תקופת המתנה, סכום חודשי, משך תשלום והצמדה.','להבחין בין פוליסה פרטית, קבוצתית וכיסוי קופת חולים.'],notAssume:['תלות בעזרה אינה בהכרח עומדת בהגדרת הפוליסה','תגמול שיפוי ופיצוי פועלים אחרת']},
+  'עסק':{terms:['רכוש עסקי','אובדן רווחים','חבות מעבידים','אחריות כלפי צד שלישי','אחריות מקצועית','חבות מוצר','פריצה','כספים','ציוד אלקטרוני','שבר מכני','סייבר'],checks:['לזהות את תחום הפעילות, כתובת, מחזור, שכר ומספר עובדים.','לבדוק בסיס שיפוי, סכומי רכוש, תת-גבולות, מיגון והרחבות.','באובדן רווחים: לבדוק תקופת שיפוי, תקופת המתנה והגדרת מחזור/רווח גולמי.','בחבויות: לבדוק גבול למקרה/מצטבר, בסיס הגשת תביעה ותאריך רטרואקטיבי.','לבדוק קבלני משנה, עבודה בחו״ל, מוצרים/שירותים וסיכונים מיוחדים.'],notAssume:['אחריות מקצועית אינה בהכרח על בסיס אירוע','רכוש עסקי אינו בהכרח מכסה אובדן רווחים']},
+  'שיניים':{terms:['טיפולי שיניים','כתרים','שתלים','אורתודונטיה','תקופת אכשרה','רופא הסדר'],checks:['לבדוק טיפולים מכוסים, רופאי הסדר, תקרות והשתתפות עצמית.','לבדוק החרגות לטיפולים שהחלו לפני תחילת הביטוח ואכשרה.'],notAssume:['כיסוי שיניים אינו בהכרח כולל שתלים/יישור שיניים']}
+ }
 };
-function knowledgeFor(type){ return POLICY_KNOWLEDGE[type] || POLICY_KNOWLEDGE['אחר']; }
+const POLICY_KNOWLEDGE = Object.fromEntries(Object.entries(INSURANCE_KB.branches).map(([k,v])=>[k,{covers:v.terms,checks:v.checks,gaps:v.notAssume}]));
+function knowledgeFor(type){return POLICY_KNOWLEDGE[type]||{covers:[],checks:['יש לבדוק את הגדרת המוצר ואת תנאי הפוליסה המלאים'],gaps:[]}}
+function kbTermMatches(text){const t=String(text||'').toLowerCase();const out=[];for(const [term,desc] of INSURANCE_KB.principles){if(t.includes(term.toLowerCase()))out.push({term,desc})}return out}
+function lineEvidence(text,words){const lines=String(text||'').split(/\n+/).map(x=>x.trim()).filter(x=>x.length>3&&x.length<260);return [...new Set(lines.filter(l=>words.some(w=>l.toLowerCase().includes(w.toLowerCase()))))].slice(0,30)}
+function analyzeLocalKnowledge(text,forcedType){const c=classifyPolicyType(text,'');const type=forcedType||c.type;const b=INSURANCE_KB.branches[type]||null;const terms=kbTermMatches(text);const coverWords=['כיסוי','מבוטח','מכוסה','הרחבה','פרק','גבול אחריות','סכום ביטוח','שירותי'];const exclWords=['חריג','לא יכוסה','אינו מכוסה','סייג','למעט','לא תחול'];const cov=lineEvidence(text,coverWords);const ex=lineEvidence(text,exclWords);const flags=[];
+ if(!/דף פרטי הביטוח|רשימה|schedule/i.test(text))flags.push('לא זוהה בוודאות דף פרטי ביטוח/רשימה; ייתכן שהמסמך הוא תנאים כלליים או נספח.');
+ if(/טיוטה|הצעה|עותק לבדיקה|לא בתוקף/.test(text))flags.push('נמצאו סימנים אפשריים לטיוטה/הצעה/עותק לבדיקה; אין להתייחס למסמך כפוליסה פעילה בלי אימות.');
+ if(/שעבוד|מוטב בלתי חוזר|בנק/.test(text))flags.push('נמצאה התייחסות לשעבוד/בנק/מוטב. יש לקרוא את נוסח הסעיף המדויק לפני קביעה למי ישולמו תגמולים.');
+ if(/ערך כינון/.test(text))flags.push('נמצא המונח ערך כינון. יש לבדוק את תנאי הכינון, מועד ביצוע והוכחת ההוצאה.');
+ if(/ביטוח חסר/.test(text))flags.push('נמצא אזכור לביטוח חסר. יש לבדוק את נוסחת היחס, השווי הרלוונטי והחריגים להחלתה.');
+ if(/השתתפות עצמית/.test(text))flags.push('נמצאו אזכורים להשתתפות עצמית. יש לחלץ בנפרד לכל פרק/אירוע ולא להניח שקיים סכום אחיד.');
+ const checks=b?b.checks:knowledgeFor(type).checks;const notAssume=b?b.notAssume:[];
+ return {type,confidence:c.conf,reasons:c.reasons||[],terms,cov,ex,flags,checks,notAssume,branchTerms:b?b.terms:[]};}
+function localKnowledgeMarkup(text,aiFields){const a=analyzeLocalKnowledge(text,aiFields?.type||'');const escs=x=>esc(String(x||''));return `<div class="card"><h3>מנוע ידע ביטוחי מקומי · ${escs(a.type)}</h3><div class="mut">מאגר מובנה ${INSURANCE_KB.version} · ידע כללי והצלבת מונחים. אינו תחליף לתנאי הפוליסה ואינו קובע כיסוי שלא נמצא במסמך.</div>
+<div style="margin-top:10px"><b>נקודות לבדיקה לפי סוג הביטוח</b><ul style="padding-inline-start:20px">${a.checks.map(x=>`<li>${escs(x)}</li>`).join('')}</ul></div>
+${a.flags.length?`<b>התראות שהופקו מהמסמך</b><ul style="padding-inline-start:20px">${a.flags.map(x=>`<li>${escs(x)}</li>`).join('')}</ul>`:''}
+${a.cov.length?`<details><summary>שורות מסמך שנראות קשורות לכיסויים (${a.cov.length})</summary><ul style="padding-inline-start:20px">${a.cov.map(x=>`<li>${escs(x)}</li>`).join('')}</ul></details>`:''}
+${a.ex.length?`<details><summary>שורות מסמך שנראות קשורות לחריגים (${a.ex.length})</summary><ul style="padding-inline-start:20px">${a.ex.map(x=>`<li>${escs(x)}</li>`).join('')}</ul></details>`:''}
+${a.terms.length?`<details><summary>מושגים ביטוחיים שאותרו (${a.terms.length})</summary>${a.terms.map(x=>`<p><b>${escs(x.term)}</b> — ${escs(x.desc)}</p>`).join('')}</details>`:''}
+${a.notAssume.length?`<div class="small" style="margin-top:8px"><b>אין להסיק אוטומטית:</b> ${a.notAssume.map(escs).join(' · ')}</div>`:''}
+<details><summary>מקורות ידע כלליים שהוטמעו</summary><ul style="padding-inline-start:20px">${INSURANCE_KB.sources.map(x=>`<li><a href="${x.url}" target="_blank" rel="noopener">${escs(x.name)}</a> — ${escs(x.note)}</li>`).join('')}</ul><div class="small">המקורות הם נקודת מוצא לעיון; תנאי הפוליסה הספציפית והנוסח המעודכן גוברים על ידע כללי.</div></details>
+</div>`}
+
 
 
 async function aiExtractTyped(text,fileName){
- const c=classifyPolicyType(text,'');
- const base='אתה מומחה לחילוץ נתונים מפוליסות ביטוח בישראל. קרא את כל הטקסט, לרבות כותרות, טבלאות, נספחים והערות. אל תנחש ואל תמלא מידע שאינו מופיע. זיהוי סוג מקומי: '+c.type+' בביטחון '+c.conf+'%. אם מופיע ועד בית או בית משותף, סווג ועד בית ולא דירה פרטית. החזר JSON בלבד.';
- const schema='{"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","steps":"","docs":"","ph":"","note":"","full":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":"","_meta":{"co":{"status":"explicit|inferred|missing","conf":0,"page":""},"num":{"status":"explicit|inferred|missing","conf":0,"page":""},"end":{"status":"explicit|inferred|missing","conf":0,"page":""},"prem":{"status":"explicit|inferred|missing","conf":0,"page":""},"freq":{"status":"explicit|inferred|missing","conf":0,"page":""}}}';
- const instructions='תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. חברת הביטוח היא המבטח, לא סוכנות הביטוח. הפרד בין בעל הפוליסה, המבוטחים, סוכן ומוטבים. אל תבלבל בין סכום ביטוח לפרמיה. אם שדה חסר, השאר ריק וסמן missing. כלול מספרי עמודים כשאפשר. '; 
- const parse=raw=>{const m=String(raw||'').match(/\{[\s\S]*\}/);if(!m)throw new Error('תשובת AI אינה JSON תקין');return JSON.parse(m[0])};
- const chunks=[];const pages=text.split(/(?=\[\[עמוד \d+\]\])/g).filter(x=>x.trim());
- if(text.length<=26000)chunks.push(text);
- else{let cur='';for(const pg of pages){if(cur.length+pg.length>18000&&cur){chunks.push(cur);cur=''}cur+=pg+'\n'}if(cur)chunks.push(cur);}
- let merged=null;for(let i=0;i<chunks.length;i++){
-  const progress=$('#scanOut');if(progress)progress.innerHTML=`<div class="card">ניתוח AI — חלק ${i+1} מתוך ${chunks.length}. המערכת תנסה ספק חלופי אם הספק הראשי לא יגיב.</div>`;
-  const prompt=base+' '+instructions+' החזר JSON במבנה הבא: '+schema+'\nקובץ: '+fileName+'\nחלק '+(i+1)+' מתוך '+chunks.length+'. אם זה לא החלק הראשון, התמקד בהשלמת שדות ובכיסויים/חריגים נוספים.\nמסמך:\n'+chunks[i].slice(0,22000);
-  const got=parse(await AI(prompt));
-  if(!merged)merged=got;else for(const [k,v] of Object.entries(got)){if(v==null||v===''||(Array.isArray(v)&&!v.length))continue;if(Array.isArray(v)){merged[k]=[...(merged[k]||[]),...v]}else if(['cov','ex','note','full','who','steps','docs','ph','notice','ded','specials','chapters','deductibles','gaps'].includes(k)){const old=String(merged[k]||'');const add=String(v);if(add&&!old.includes(add))merged[k]=old?old+'\n'+add:add}else if(!merged[k])merged[k]=v;}
- }
- if(!merged)throw new Error('לא התקבלה תוצאת AI');
- if(!merged.type||merged.type==='רכב'){const c2=classifyPolicyType(text,merged.prod||'');if(c2.conf>=60)merged.type=c2.type;else if(!merged.type)merged.type='אחר'}
- return merged;
+  const c = classifyPolicyType(text, '');
+  const base = 'חילוץ מובנה מפוליסת ביטוח בעברית. לעולם אל תנחש סוג=רכב כברירת מחדל. אם אין סימן חד-משמעי - החזר type="אחר". סוגים אפשריים: רכב, דירה, ועד בית, בריאות, חיים, נסיעות, משכנתא, תאונות, סיעוד, עסק, שיניים, אחר. אם מופיע "ועד בית" או "בית משותף" - type="ועד בית", גם אם מופיע "רכב חשמלי" או "עמדות טעינה" - זה לא ביטוח רכב. זיהוי ראשוני מקומי: '+c.type+' (ביטחון '+c.conf+'%). בדוק אותו, אל תעתיק בעיוורון. החזר JSON בלבד.';
+  const prompt = base + ' החזר JSON: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. אל תמציא. מסמך:\n' + text.slice(0,50000);
+  const raw = await AI(prompt); const m = raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('תשובת AI לא תקינה'); const j = JSON.parse(m[0]);
+  if(!j.type || j.type==='רכב'){ const c2 = classifyPolicyType(text, j.prod||''); if(c2.conf>=60) j.type = c2.type; else if(!j.type) j.type='אחר'; }
+  return j;
 }
 
 
