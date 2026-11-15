@@ -119,7 +119,7 @@ details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin
 </style>
 </head>
 <body>
-<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.5 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + JSON Repair + AI Test · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
+<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.6 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) Cross-Check · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
 <div class="toast" id="toast"></div>
 <div class="sheet" id="sheet"><div id="sheetBody"></div></div>
 <script>
@@ -131,7 +131,7 @@ const keyOf=async(pw,s)=>{const m=await crypto.subtle.importKey('raw',enc.encode
 const db=()=>new Promise((ok,no)=>{const r=indexedDB.open('kaspet',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=no});
 const idbGet=async k=>{const d=await db();return new Promise((ok,no)=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>ok(q.result);q.onerror=no})};
 const idbSet=async(k,v)=>{const d=await db();return new Promise((ok,no)=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,k);t.oncomplete=ok;t.onerror=no})};
-const BUILD='9.0.5 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + JSON Repair + AI Test';
+const BUILD='9.0.6 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) Cross-Check';
 const TYPES={'רכב':'🚗','דירה':'🏠','בריאות':'🩺','שיניים':'🦷','חיים':'❤️','משכנתא':'🏦','נסיעות':'✈️','תאונות':'🛡️','סיעוד':'🧓','עסק':'🏢','ועד בית':'🏢','אחר':'📄'};
 const CO_LIST=['הראל','מגדל','הפניקס','כלל ביטוח','מנורה מבטחים','AIG ישראל','שירביט','ביטוח ישיר','הכשרה','איילון','ליברה','כללית','מכבי','מאוחדת','לאומית','פספורטכארד','הדר','שומרה','ווישור (WeSure)','9 מיליון','שלמה ביטוח','ביטוח חקלאי'];
 const INS_DB=[['הראל',['הראל','harel'],['harel-group.co.il','harel.co.il'],[]],['מגדל',['מגדל','migdal'],['migdal.co.il'],[]],['הפניקס',['הפניקס','פניקס','phoenix','fenix'],['fnx.co.il','phoenix.co.il'],[]],['כלל ביטוח',['כלל ביטוח','כלל חברה לביטוח','clal'],['clalbit.co.il','clal.co.il'],['clal']],['מנורה מבטחים',['מנורה מבטחים','מנורה','menora'],['menoramivt.co.il'],[]],['איילון',['איילון','ayalon'],['ayalon-ins.co.il'],[]],['הכשרה',['הכשרה','hachshara'],['hachshara.co.il'],[]],['שומרה',['שומרה','shomera'],['shomera.co.il'],[]],['שירביט',['שירביט','shirbit'],['shirbit.co.il'],[]],['AIG ישראל',['aig','איי איי ג׳י'],['aig.co.il'],[]],['ביטוח ישיר',['ביטוח ישיר','איי די איי','idi'],['555.co.il'],[]],['ליברה',['ליברה','libra'],['libra.co.il'],[]],['ווישור (WeSure)',['ווישור','wesure'],['wesure.co.il'],[]],['שלמה ביטוח',['שלמה ביטוח','shlomo'],['shlomo.co.il'],[]],['9 מיליון',['9 מיליון','9million'],[],[]],['ביטוח חקלאי',['ביטוח חקלאי'],[],[]],['הדר',['הדר חברה לביטוח','הדר ביטוח'],[],[]],['מכבי',['מכבי','maccabi'],['maccabi4u.co.il'],['מכבי']],['כללית',['כללית','clalit'],['clalit.co.il'],['כללית']],['מאוחדת',['מאוחדת','meuhedet'],['meuhedet.co.il'],[]],['לאומית',['לאומית'],['leumit.co.il'],['לאומית']],['פספורטכארד',['פספורטכארד','passportcard'],['passportcard.co.il'],[]]];
@@ -277,7 +277,7 @@ async function processNextScan(){if(SCAN_CUR>=SCAN_Q.length){$('#scanOut').inner
 const f=SCAN_Q[SCAN_CUR];$('#scanProg').innerHTML=`<div class="mut">קובץ ${SCAN_CUR+1} מתוך ${SCAN_Q.length}: ${esc(f.name)}</div><div class="progress"><i style="width:${Math.round((SCAN_CUR/SCAN_Q.length)*100)}%"></i></div>`;
 await scanOne(f);}
 async function scanOne(file){const out=$('#scanOut');out.innerHTML='<div class="card">מכין מסמך לחילוץ…</div>';
-let text='',pages=0,docType='פוליסה מלאה',aiFields=null,usedAI=false,aiError='';
+let text='',pages=0,docType='פוליסה מלאה',aiFields=null,usedAI=false,aiError=''; window._qcDual=null;
 try{
  if(file.type==='application/pdf'||file.name.toLowerCase().endsWith('.pdf')){const r=await extractPdfAll(file);text=r.text;pages=r.pages}
  else{text=await extractImageText(file);pages=1}
@@ -289,7 +289,7 @@ else if(/אישור ביטוח|אישור קיום/.test(text))docType='אישו
 const coHit=findCo(text);
 if(!S.settings.localOnly){
  const ok=!S.settings.requireConsent||confirm(`לשלוח את הטקסט שחולץ מהמסמך "${file.name}" ל־AI (${S.settings.aiProvider}) לצורך ניתוח? המסמך עצמו לא נשלח; רק הטקסט שחולץ. אפשר לסרב ולהשתמש בחילוץ מקומי בלבד.`);
- if(ok){try{out.innerHTML='<div class="card">הטקסט חולץ. מנתח באמצעות AI… אם ספק אחד לא יגיב, תתבצע בדיקה מול ספק חלופי שהוגדר.</div>';aiFields=await aiExtractTyped(text,file.name);usedAI=true}catch(e){aiError=String(e.code||e.message||'שגיאת AI');toast('ניתוח AI נכשל: '+aiError.slice(0,90)+' — התוצאה המקומית תוצג לבדיקה')}}
+ if(ok){try{const _dualReady=['groq','gemini'].every(p=>S.settings.aiKeys[p]||S.ai[p]);out.innerHTML='<div class="card">הטקסט חולץ. ' + (_dualReady?'מנתח באמצעות AI כפול — Groq + Gemini קוראים את המסמך יחד ומצליבים…':'מנתח באמצעות AI… אם ספק אחד לא יגיב, תתבצע בדיקה מול ספק חלופי שהוגדר.') + '</div>';aiFields=await aiExtractTyped(text,file.name);usedAI=true}catch(e){aiError=String(e.code||e.message||'שגיאת AI');toast('ניתוח AI נכשל: '+aiError.slice(0,90)+' — התוצאה המקומית תוצג לבדיקה')}}
 }
 const local=localExtract(text,coHit);
 const det=extractAyalonDeterministic(text); window._qcDet=det; const coverageItems=extractCoverageItems(text); window._qcCoverage=coverageItems; const ai2=Object.assign({},aiFields||{}); if(det.fields.type&&det.fields.type.value) ai2.type=det.fields.type.value; const merged=mergeFields(local,ai2,det,text);
@@ -627,6 +627,7 @@ function showQC(fileName,docType,pages,text,fields,usedAI,coHit,aiError='',aiFie
 const flags=[]; const warns=window._qcWarnings||[];if(!fields.find(f=>f.key==='co').value)flags.push('חברת ביטוח לא זוהתה — חובה למלא ידנית');if(!fields.find(f=>f.key==='num').value)flags.push('מספר פוליסה חסר');if(!fields.find(f=>f.key==='freq').value)flags.push('תדירות לא זוהתה — העלות החודשית לא תחושב עד שתאומת');if(!fields.find(f=>f.key==='end').value)flags.push('תוקף לא זוהה');
 out.innerHTML=`<div class="card"><h3>בקרת איכות — ${esc(fileName)}</h3><div class="mut">סוג מסמך: ${esc(docType)} · ${pages} עמודים · ${usedAI?'נותח באמצעות AI ונבדק מול חילוץ מקומי':'חילוץ מקומי בלבד — לא בוצע ניתוח AI'} ${coHit?`· חברה זוהתה בחילוץ המקומי בביטחון ${coHit.conf}%`:''}</div>
 ${aiError?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">ניתוח ה-AI לא הושלם</b><div class="mut" style="margin-top:5px">${esc(aiError)}</div><div class="mut">הנתונים שלהלן מבוססים על חילוץ מקומי בלבד. אין לראות בהם ניתוח AI.</div></div>`:''}
+${(window._qcDual&&window._qcDual.mode==='dual')?`<div style="background:#e8f5f3;border-radius:12px;padding:12px;margin:10px 0"><b>קריאה משותפת: Groq + Gemini</b><div class="mut" style="margin-top:5px">שני הספקים קראו את המסמך. הסכימו על ${window._qcDual.agreements} שדות · שולבו ${window._qcDual.combined} שדות משני המקורות · ${window._qcDual.conflicts.length} מחלוקות.</div>${window._qcDual.conflicts.length?`<ul style="margin:6px 0;padding-inline-start:18px">${window._qcDual.conflicts.map(c=>`<li><b>${esc(c.field)}</b>: Groq — "${esc(String(c.groq||c['groq']||'').slice(0,60))}" · Gemini — "${esc(String(c.gemini||c['gemini']||'').slice(0,60))}" — ${esc(c.resolved)}</li>`).join('')}</ul>`:''}</div>`:''}${(window._qcDual&&window._qcDual.mode==='single'&&window._qcDual.note)?`<div style="background:#fff3cd;border-radius:12px;padding:12px;margin:10px 0"><b>קריאה יחידה (לא משותפת)</b><div class="mut" style="margin-top:5px">${esc(window._qcDual.note)}</div></div>`:''}
 ${warns.length?`<div style="background:#fff3cd;border-radius:12px;padding:12px;margin:10px 0"><b style="color:#856404">ה-AI הציע נתונים שלא קיימים במסמך — הם נזרקו ונלקח הערך מהמסמך</b><ul style="margin:6px 0;padding-inline-start:18px">${warns.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''} ${flags.length?`<div style="background:var(--redBg);border-radius:12px;padding:12px;margin:10px 0"><b style="color:var(--red)">דגלים אדומים</b><ul style="margin:6px 0;padding-inline-start:18px">${flags.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`:''}
 <table class="table"><tr><th>שדה</th><th>תוצאה</th><th>מצב</th></tr>${fields.map((f,i)=>`<tr><td>${esc(f.label)}</td><td><input id="qc-${i}" value="${esc(f.value)}" style="margin:0"></td><td><span class="${f.status==='explicit'?'qc-ok':f.status==='inferred'?'qc-mid':'qc-bad'}">${f.status==='explicit'?'מפורש':f.status==='inferred'?'הוסק':'חסר'}</span> ${f.conf?f.conf+'%':''} ${f.page?'(עמ׳ '+f.page+')':''}</td></tr>`).join('')}</table>
 <div class="card" style="margin-top:12px"><h3>כיסויים שזוהו במסמך (חילוץ עמוק — עם ציטוט)</h3><div class="mut">כל שורה מגובה בציטוט מהמסמך. פריט שלא נמצא בו מסומן "לא נמצא" — לא הומצא.</div><table class="table"><tr><th>כיסוי</th><th>הנחה / סכום</th><th>השתתפות עצמית</th><th>המתנה</th><th>ציטוט מהמסמך</th></tr>${(window._qcCoverage||[]).filter(x=>x.found).map(x=>`<tr><td>${esc(x.label)}</td><td>${esc([x.discount,x.ceiling,x.frequency,x.ages].filter(Boolean).join(' · ')||'—')}</td><td>${esc(x.copay||'—')}</td><td>${esc(x.waiting||'—')}</td><td style="font-size:12px">${esc(x.quote.slice(0,180))}${x.page?' (עמ׳ '+x.page+')':''}</td></tr>`).join('')||'<tr><td colspan="5">לא זוהו פריטי כיסוי מהקטלוג במסמך זה.</td></tr>'}</table></div>
@@ -794,7 +795,7 @@ function settingsV(){return `<div class="card"><h3>גרסה ועדכון</h3><di
 <div class="small">כאשר מצב מקומי בלבד פעיל, סריקת AI וספריות PDF/OCR חיצוניות חסומות. ייבוא טקסט שהודבק עדיין עובד.</div></div>
 <div class="card"><h3>הגדרות AI</h3><label>ספק ברירת מחדל</label><select id="aiProv" onchange="setProv(this.value)">${['gemini','groq','claude'].map(x=>`<option ${S.settings.aiProvider===x?'selected':''}>${x}</option>`).join('')}</select>
 <label>מפתח ${S.settings.aiProvider}</label><input id="aiKey" type="password" placeholder="הדבק מפתח — נשמר מוצפן בכספת" value="${esc(S.settings.aiKeys[S.settings.aiProvider]||'')}"><button class="btn" onclick="saveKey()">שמור מפתח</button>
-<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div><div class="mut" style="margin-top:6px">מפתחות מוגדרים: ${['gemini','groq','claude'].map(p=>p+': '+(S.settings.aiKeys[p]?'✓':'✗')).join(' · ')}</div><div class="row" style="margin-top:8px"><button class="btn o" onclick="testAI()">בדוק חיבור AI</button></div><div id="aiTestRes" class="mut" style="margin-top:6px"></div><div class="mut" style="margin-top:4px">אם המפתח שלך מתחיל ב־gsk_ הוא מפתח Groq — האפליקציה תזהה אותו אוטומטית ותשמור אותו תחת Groq, גם אם התפריט היה על ספק אחר.</div></div>
+<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div><div class="mut" style="margin-top:6px">מפתחות מוגדרים: ${['gemini','groq','claude'].map(p=>p+': '+(S.settings.aiKeys[p]?'✓':'✗')).join(' · ')}</div><div class="row" style="margin-top:8px"><button class="btn o" onclick="testAI()">בדוק חיבור AI</button></div><div id="aiTestRes" class="mut" style="margin-top:6px"></div><div class="mut" style="margin-top:4px">אם המפתח שלך מתחיל ב־gsk_ הוא מפתח Groq — האפליקציה תזהה אותו אוטומטית ותשמור אותו תחת Groq, גם אם התפריט היה על ספק אחר. כששני מפתחות מוגדרים (Groq + Gemini), כל מסמך נקרא על ידי שניהם והתוצאות מצולבות: מה שאחד פספס והשני מצא נשמר, סתירה מוכרעת לפי מה שמופיע במסמך, ופרק מומצא (שלא במסמך) נזרק.</div></div>
 <div class="card"><h3>נתונים</h3><button class="btn" onclick="nav('backup')">גיבוי ושחזור</button><button class="btn o" onclick="nav('import')">ייבוא פוליסה מ־Claude (הדבק)</button><button class="btn o" onclick="exportJSON()">ייצוא JSON (כל השדות — כולל תדירות)</button><button class="btn o" onclick="nav('family')">תיק משפחתי</button><button class="btn o" onclick="nav('coverage')">מפת כיסויים</button></div>
 <div class="card"><h3>אודות</h3><div class="mut">גרסה ${BUILD} · קובץ HTML יחיד · ללא שרת · IndexedDB + AES-GCM · PBKDF2 300,000 איטרציות</div><div class="mut" style="margin-top:6px">המידע באפליקציה אינו חוות דעת ביטוחית או משפטית. ההחלטה הסופית תמיד בידי המבטח.</div></div>`}
 async function setAutoLock(v){S.settings.autoLockMin=Number(v);await saveQuiet();toast('נשמר')}
@@ -903,7 +904,137 @@ async function AI(prompt){
 function _estTokens(t){return Math.ceil(String(t||'').length/3.2)}
 function _splitByPages(text){const parts=String(text||'').split(/(?=\[\[עמוד \d+\]\])/g);return parts.filter(x=>x.trim())}
 function _selectRelevantPages(text,maxChars){const pages=_splitByPages(text);if(!pages.length)return String(text||'').slice(0,6000);const kw=['פרמיה','השתתפות עצמית','פוליסה','מספר פוליסה','מבוטח','תקופת הביטוח','תוקף','כיסוי','חריג','חברת ביטוח','דמי ביטוח','סכום ביטוח','מוקד','תביעות'];const scored=pages.map(pg=>({pg,sc:kw.reduce((a,k)=>a+(pg.includes(k)?1:0),0)+(pg.length>200?1:0)}));scored.sort((a,b)=>b.sc-a.sc);let out='',used=new Set();for(const s of scored){if(out.length+s.pg.length>maxChars)break;out+=s.pg+'\n';used.add(s.pg)} if(out.length<1000){for(const pg of pages){if(out.length+pg.length>maxChars)break;if(!used.has(pg))out+=pg+'\n'}} return out.slice(0,maxChars)}
-async function aiExtractTyped(text,fileName){const c=classifyPolicyType(text,'');const isVaad=/ועד בית|בית משותף/.test(text);const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';const sel=_selectRelevantPages(text,7000);const prompt=base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). מסמך:\n'+sel;try{const raw=await AI(prompt);const j=parseAIJson(raw);if(!j.type||j.type==='רכב'){const c2=classifyPolicyType(text,j.prod||'');if(c2.conf>=60)j.type=c2.type;else if(!j.type)j.type='אחר'} return j}catch(e){throw e}}
+/* ===== קריאה משותפת Groq + Gemini — הצלבה נגד המסמך, לא הצבעה ===== */
+function buildExtractPrompt(text,fileName){
+  const c=classifyPolicyType(text,'');
+  const isVaad=/ועד בית|בית משותף/.test(text);
+  const base=isVaad?'אתה מחלץ פוליסת ועד בית. המבוטח הוא הוועד, לא נציג הוועד. טיוטה/הצעה לעולם לא final. פרמיה שנתית => freq=שנתי. חלץ פרקים ומטריצת השתתפויות.':'חילוץ מובנה מפוליסת ביטוח בעברית. אל תמציא.';
+  const sel=_selectRelevantPages(text,7000);
+  return base+' החזר JSON בלבד: {"type":"","co":"","prod":"","ins":"","cust":"","num":"","asset":"","start":"","end":"","prem":"","freq":"","ded":"","cl":"","agn":"","ag":"","who":"","cov":"","ex":"","notice":"","note":"","docType":"","docStatusText":"","buildingYear":"","numApartments":"","vaadRep":"","chapters":[],"deductibles":[],"specials":[],"gaps":""}. תאריכים YYYY-MM-DD. freq רק חודשי/שנתי/רבעוני/חצי שנתי או ריק. זיהוי מקומי: '+c.type+' ('+c.conf+'%). מסמך:\n'+sel;
+}
+function fixAIType(j,text){
+  if(!j.type||j.type==='רכב'){
+    const c2=classifyPolicyType(text,j.prod||'');
+    if(c2.conf>=60) j.type=c2.type; else if(!j.type) j.type='אחר';
+  }
+  return j;
+}
+function valueInText(value,text){
+  const v=String(value==null?'':value).trim(); if(!v) return false;
+  const t=String(text||'');
+  const dm=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(dm){
+    // Strict date check: DDMMYYYY must appear in the digits-only text
+    const digits=t.replace(/\D/g,'');
+    const dmy=dm[3]+dm[2]+dm[1];
+    if(digits.includes(dmy)) return true;
+    if(t.includes(v)) return true;
+    return false;
+  }
+  return detVerbatim(v,t);
+}
+function normVal(v){
+  let s=String(v==null?'':v).trim().replace(/\s+/g,' ');
+  const dm=s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);
+  if(dm) s=dm[3]+'-'+dm[2].padStart(2,'0')+'-'+dm[1].padStart(2,'0');
+  s=s.replace(/,/g,'').replace(/[₪\s]/g,'');
+  return s;
+}
+function mergeTwoAI(a,b,text){
+  const A=a.data||{}, B=b.data||{};
+  const fields={}, conflicts=[]; let agreements=0, combined=0;
+  const STRUCT=['type','co','prod','ins','cust','num','asset','start','end','prem','freq','ded','cl','agn','ag','docType','docStatusText','buildingYear','numApartments','vaadRep'];
+  for(const f of STRUCT){
+    const va=normVal(A[f]), vb=normVal(B[f]);
+    const rawA=String(A[f]==null?'':A[f]).trim(), rawB=String(B[f]==null?'':B[f]).trim();
+    if(!va&&!vb) continue;
+    if(va&&vb&&va===vb){ fields[f]=rawA; agreements++; continue; }
+    if(va&&!vb){ fields[f]=rawA; continue; }
+    if(!va&&vb){ fields[f]=rawB; continue; }
+    // Both differ — evidence decides
+    const ea=valueInText(rawA,text), eb=valueInText(rawB,text);
+    let chosen, reason;
+    if(ea&&!eb){ chosen=rawA; reason=a.prov+' מופיע במסמך, '+b.prov+' לא'; }
+    else if(eb&&!ea){ chosen=rawB; reason=b.prov+' מופיע במסמך, '+a.prov+' לא'; }
+    else if(ea&&eb){ chosen=(S.settings.aiProvider===b.prov?rawB:rawA); reason='שניהם מופיעים במסמך — נבחר ספק ברירת המחדל, דרושה בדיקה'; }
+    else { chosen=(S.settings.aiProvider===b.prov?rawB:rawA); reason='אף אחד לא מופיע במסמך — נבחר ספק ברירת המחדל, דרושה בדיקה'; }
+    fields[f]=chosen;
+    conflicts.push({field:f,[a.prov]:rawA,[b.prov]:rawB,resolved:reason});
+  }
+  const TEXTF=['who','cov','ex','notice','note','gaps','steps','docs','ph'];
+  for(const f of TEXTF){
+    const la=String(A[f]==null?'':A[f]).split('\n').map(x=>x.trim()).filter(Boolean);
+    const lb=String(B[f]==null?'':B[f]).split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!la.length&&!lb.length) continue;
+    const seen=new Set(), out=[];
+    for(const line of [...la,...lb]){ const k=normVal(line); if(!seen.has(k)){ seen.add(k); out.push(line); } }
+    if(la.join('\n')===lb.join('\n')) agreements++; else if(la.length&&lb.length) combined++;
+    fields[f]=out.join('\n');
+  }
+  const keyOf=x=>{ if(x==null) return ''; if(typeof x==='object'){ const o={}; Object.keys(x).sort().forEach(k=>o[k]=x[k]); return JSON.stringify(o); } return normVal(x); };
+  const itemEvidence=x=>{
+    if(x==null) return false;
+    if(typeof x==='object'){
+      for(const k of Object.keys(x)){
+        const val=x[k];
+        if(val==null||val==='') continue;
+        if(typeof val==='number'||/\d/.test(String(val))){ if(valueInText(String(val),text)) return true; }
+        else if(String(val).length>2 && String(text||'').includes(String(val).trim())) return true;
+      }
+      return false;
+    }
+    return valueInText(String(x),text);
+  };
+  for(const f of ['chapters','deductibles']){
+    const arrA=Array.isArray(A[f])?A[f]:[], arrB=Array.isArray(B[f])?B[f]:[];
+    if(!arrA.length&&!arrB.length) continue;
+    const seen=new Set(), out=[];
+    for(const item of [...arrA,...arrB]){
+      const k=keyOf(item); if(seen.has(k)) continue; seen.add(k);
+      if(itemEvidence(item)){ out.push(item); }
+      else { conflicts.push({field:f,[a.prov]:JSON.stringify(item),[b.prov]:'(לא הופיע)',resolved:'נזרק — לא נמצאה ראיה במסמך'}); }
+    }
+    if(out.length) fields[f]=out;
+  }
+  // specials: interpretive — union, never dropped, flagged if numeric claim has no evidence
+  {
+    const sA=Array.isArray(A.specials)?A.specials:[], sB=Array.isArray(B.specials)?B.specials:[];
+    const seen=new Set(), out=[];
+    for(const s of [...sA,...sB]){ const k=normVal(s); if(!seen.has(k)){ seen.add(k); out.push(s); } }
+    if(out.length) fields.specials=out;
+  }
+  return {fields,conflicts,agreements,combined};
+}
+async function aiExtractTyped(text,fileName){
+  const prompt=buildExtractPrompt(text,fileName);
+  const keyOf=p=>(S.settings.aiKeys[p]||S.ai[p]||'');
+  const dualProvs=['groq','gemini'].filter(p=>keyOf(p));
+  if(dualProvs.length>=2){
+    const settled=await Promise.allSettled(dualProvs.map(async p=>{
+      const raw=await aiRequest(p,keyOf(p),prompt);
+      const data=fixAIType(parseAIJson(raw),text);
+      return {prov:p,data};
+    }));
+    const ok=settled.filter(r=>r.status==='fulfilled').map(r=>r.value);
+    const failed=settled.filter(r=>r.status==='rejected').map((r,i)=>dualProvs[i]+': '+String(r.reason&&(r.reason.code||r.reason.message)||r.reason));
+    if(!ok.length) throw {code:'קריאה משותפת נכשלה — '+failed.join(' | ')};
+    if(ok.length===1){
+      window._qcDual={mode:'single',providers:dualProvs,used:[ok[0].prov],note:'רק '+ok[0].prov+' ענה. השני נכשל: '+failed.join(' | '),conflicts:[],agreements:0,combined:0};
+      return ok[0].data;
+    }
+    const ga=ok.find(x=>x.prov==='groq')||ok[0];
+    const ge=ok.find(x=>x.prov==='gemini')||ok[1];
+    const m=mergeTwoAI(ga,ge,text);
+    window._qcDual={mode:'dual',providers:dualProvs,used:[ga.prov,ge.prov],note:'',conflicts:m.conflicts,agreements:m.agreements,combined:m.combined};
+    return m.fields;
+  }
+  try{
+    const raw=await AI(prompt);
+    const jj=fixAIType(parseAIJson(raw),text);
+    window._qcDual={mode:'single',providers:dualProvs,used:[],note:'מוגדר מפתח אחד בלבד — קריאה רגילה (לא משותפת).',conflicts:[],agreements:0,combined:0};
+    return jj;
+  }catch(e){ throw e; }
+}
 function askLocal(q){const res=lsearch(q,S.p||[]);return res.map(r=>({id:r.p.id,co:r.p.co,type:r.p.type,num:r.p.num,score:r.sc,snippets:r.s}))}
 try{if(typeof INSURANCE_KB!=='undefined'){INSURANCE_KB.version='9.0';INSURANCE_KB.principles=INSURANCE_KB.principles||[];const _extra=[['ביטוח חובה לרכב','כיסוי חובה לנזקי גוף בלבד. לא מכסה נזק לרכב עצמו ולא רכוש צד ג.'],['ביטוח מקיף','כיסוי לנזק לרכב המבוטח לפי תנאים: תאונה, גניבה, שריפה, נזקי טבע. בדוק השתתפות, מוסך הסדר, ירידת ערך.'],['ביטוח צד ג לרכב','כיסוי לנזק רכוש/גוף לצד שלישי עד גבול אחריות. לא מכסה את הרכב המבוטח.'],['ביטוח דירה - מבנה','עלות הקמה מחדש, לא שווי שוק. בדוק שטח, הצמדה, ערך כינון.'],['ביטוח דירה - תכולה','רכוש בתוך הדירה. בדוק תתי-גבולות לתכשיטים, מחשב, אופניים.'],['נזקי מים בדירה','הבחן: תיקון מקור הנזק מול נזק נלווה. שרברב הסדר/פרטי, איתור, איטום ובלאי.'],['רעידת אדמה','כיסוי נפרד לעיתים. בדוק אם נרכש ומה ההשתתפות - לרוב באחוזים.'],['ועד בית - חבות מעבידים','כיסוי לעובדי הוועד/חברת ניהול אם נרכש. בדוק גבול והחרגות.'],['ועד בית - צד ג','גבול אחריות למקרה ולתקופה. בדוק הרחבת חברי ועד ואחריות אישית.'],['ועד בית - מעלית','מעלית היא מערכת נפרדת - בדוק תחזוקה, בדיקות, רישוי וכיסוי מפורש.'],['ועד בית - עמדת טעינה','עמדת טעינה וסולארי אינם מכוסים אוטומטית. נדרש ציון מפורש ותנאי מיגון.'],['בריאות - משלים שבן','משלים את השבן. לא משלם כפל על אותו שירות בלי תיאום.'],['בריאות - שקל ראשון','משלם ללא תלות בשבן, בכפוף לתקרה ולהגדרות.'],['בריאות - תרופות מחוץ לסל','בדוק התוויה, תקרה שנתית, השתתפות, אישור מראש.'],['סיעוד','בדוק הגדרת מצב סיעודי, תקופת המתנה, תקופת פיצוי, סכום חודשי.'],['תאונות אישיות','פיצוי לפי טבלת נכות. בדוק הגדרת תאונה, חריגי ספורט, גיל סיום.'],['חיים - ריסק','סכום למקרה מוות בלבד. בדוק מוטבים, תקופה, הצמדה.'],['משכנתא - מבנה','סכום לפי עלות הקמה מחדש. בדוק מוטב/שעבוד לבנק.'],['משכנתא - חיים','סכום לפי יתרת הלוואה. בדוק מוטב בלתי חוזר.'],['נסיעות - ביטול','סיבות מזכות בלבד, מועד רכישה, אסמכתאות.'],['נסיעות - כבודה','תתי-גבולות לפריטים יקרים, חריגי מזוודה, דיווח.'],['עסק - חבות','חבות כלפי צד ג ועובדים. בדוק גבול למקרה ולתקופה, בסיס תביעה.'],['עסק - רכוש','מבנה, ציוד, מלאי, אובדן רווחים. בדוק סכומים ותתי-גבולות.'],['שיניים','בדוק תקרה שנתית, השתתפות, תקופת אכשרה, רשימת רופאים.'],['החרגה רפואית','סייג אישי - חל רק על המבוטח/המצב המצוין, לא על כל הפוליסה.'],['תקופת אכשרה בבריאות','חודשים שבהם כיסוי מסוים עדיין לא חל. בדוק לכל פרק בנפרד.'],['דמי כינון','חידוש סכום הביטוח לאחר תביעה, בתשלום פרמיה יחסית.'],['מוסך הסדר','בחירת מוסך משפיעה על השתתפות ועל תנאי התיקון.'],['ירידת ערך','פיצוי על ירידת שווי הרכב לאחר תיקון, לפי טבלה ותנאים.'],['גרירה ושמשות','הרחבות נפוצות - בדוק גבול, השתתפות, ספק הסדר.']];for(const e of _extra){if(!INSURANCE_KB.principles.some(p=>p[0]===e[0]))INSURANCE_KB.principles.push(e)} INSURANCE_KB.branches=INSURANCE_KB.branches||{};Object.assign(INSURANCE_KB.branches,{'סיעוד':{terms:['מצב סיעודי','תקופת המתנה','פיצוי חודשי','אשפוז סיעודי'],checks:['בדוק הגדרת מצב סיעודי','בדוק תקופת המתנה ופיצוי','בדוק גיל סיום ותקרה'],notAssume:['סיעוד אינו אשפוז כללי']},'תאונות':{terms:['נכות','פיצוי יומי','שברים'],checks:['בדוק הגדרת תאונה','בדוק טבלת נכות','בדוק חריגי ספורט'],notAssume:['כל פציעה אינה תאונה']},'שיניים':{terms:['טיפול','שתל','כתר','אורתודנטיה'],checks:['בדוק תקרה','בדוק אכשרה','בדוק רופא הסדר'],notAssume:['כל טיפול שיניים מכוסה']},'עסק':{terms:['חבות','רכוש','אובדן רווחים'],checks:['בדוק גבול חבות','בדוק סכומי רכוש','בדוק אובדן רווחים'],notAssume:['פוליסת עסק אינה פוליסת דירה']}});}}catch(e){}
 function normalizeOcrText(t){return String(t||'').replace(/[װױ]/g,'ו').replace(/\s+([.,:;])/g,'$1').replace(/(\d)\s+(\d)/g,'$1$2').trim()}
