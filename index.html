@@ -119,7 +119,7 @@ details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin
 </style>
 </head>
 <body>
-<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.6 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) Cross-Check · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
+<div id="app"><div class="lock"><div style="font-size:56px">🔒</div><h1>הכספת שלי</h1><div class="ver">גרסה 9.0.9 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) + Invisible-Char Key Cleaning + Dynamic Model Discovery (ListModels) · מוצפן מקומית AES-GCM</div><p class="mut">צור סיסמת מאסטר. אין דרך לשחזר אותה — אם תאבד אותה המידע אבוד.</p><input id="pw" type="password" placeholder="סיסמה" autocomplete="off"><input id="pw2" type="password" placeholder="אימות סיסמה" autocomplete="off"><label class="row" style="justify-content:center"><input type="checkbox" id="rm" checked="" style="width:auto"> זכור במכשיר זה</label><button class="btn" onclick="go()">צור כספת</button><p class="small">המידע נשמר מוצפן ב־IndexedDB במכשיר בלבד. סריקת AI שולחת מסמך לספק חיצוני רק לאחר אישור מפורש שלך לכל סריקה.</p><p id="er" style="color:var(--red)"></p></div></div>
 <div class="toast" id="toast"></div>
 <div class="sheet" id="sheet"><div id="sheetBody"></div></div>
 <script>
@@ -131,7 +131,7 @@ const keyOf=async(pw,s)=>{const m=await crypto.subtle.importKey('raw',enc.encode
 const db=()=>new Promise((ok,no)=>{const r=indexedDB.open('kaspet',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>ok(r.result);r.onerror=no});
 const idbGet=async k=>{const d=await db();return new Promise((ok,no)=>{const q=d.transaction('k').objectStore('k').get(k);q.onsuccess=()=>ok(q.result);q.onerror=no})};
 const idbSet=async(k,v)=>{const d=await db();return new Promise((ok,no)=>{const t=d.transaction('k','readwrite');t.objectStore('k').put(v,k);t.oncomplete=ok;t.onerror=no})};
-const BUILD='9.0.6 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) Cross-Check';
+const BUILD='9.0.9 · 15.11.2026 · Fixed · Det-Guarded Merge + AutoFix + Deep Coverage Search + AI Key Auto-Detect + Dual AI (Groq+Gemini) + Invisible-Char Key Cleaning + Dynamic Model Discovery (ListModels)';
 const TYPES={'רכב':'🚗','דירה':'🏠','בריאות':'🩺','שיניים':'🦷','חיים':'❤️','משכנתא':'🏦','נסיעות':'✈️','תאונות':'🛡️','סיעוד':'🧓','עסק':'🏢','ועד בית':'🏢','אחר':'📄'};
 const CO_LIST=['הראל','מגדל','הפניקס','כלל ביטוח','מנורה מבטחים','AIG ישראל','שירביט','ביטוח ישיר','הכשרה','איילון','ליברה','כללית','מכבי','מאוחדת','לאומית','פספורטכארד','הדר','שומרה','ווישור (WeSure)','9 מיליון','שלמה ביטוח','ביטוח חקלאי'];
 const INS_DB=[['הראל',['הראל','harel'],['harel-group.co.il','harel.co.il'],[]],['מגדל',['מגדל','migdal'],['migdal.co.il'],[]],['הפניקס',['הפניקס','פניקס','phoenix','fenix'],['fnx.co.il','phoenix.co.il'],[]],['כלל ביטוח',['כלל ביטוח','כלל חברה לביטוח','clal'],['clalbit.co.il','clal.co.il'],['clal']],['מנורה מבטחים',['מנורה מבטחים','מנורה','menora'],['menoramivt.co.il'],[]],['איילון',['איילון','ayalon'],['ayalon-ins.co.il'],[]],['הכשרה',['הכשרה','hachshara'],['hachshara.co.il'],[]],['שומרה',['שומרה','shomera'],['shomera.co.il'],[]],['שירביט',['שירביט','shirbit'],['shirbit.co.il'],[]],['AIG ישראל',['aig','איי איי ג׳י'],['aig.co.il'],[]],['ביטוח ישיר',['ביטוח ישיר','איי די איי','idi'],['555.co.il'],[]],['ליברה',['ליברה','libra'],['libra.co.il'],[]],['ווישור (WeSure)',['ווישור','wesure'],['wesure.co.il'],[]],['שלמה ביטוח',['שלמה ביטוח','shlomo'],['shlomo.co.il'],[]],['9 מיליון',['9 מיליון','9million'],[],[]],['ביטוח חקלאי',['ביטוח חקלאי'],[],[]],['הדר',['הדר חברה לביטוח','הדר ביטוח'],[],[]],['מכבי',['מכבי','maccabi'],['maccabi4u.co.il'],['מכבי']],['כללית',['כללית','clalit'],['clalit.co.il'],['כללית']],['מאוחדת',['מאוחדת','meuhedet'],['meuhedet.co.il'],[]],['לאומית',['לאומית'],['leumit.co.il'],['לאומית']],['פספורטכארד',['פספורטכארד','passportcard'],['passportcard.co.il'],[]]];
@@ -148,8 +148,8 @@ const ph=x=>String(x||'').replace(/[^\d+*#]/g,'');
 const wa=x=>{x=ph(x);return 'https://wa.me/'+(x[0]==='0'?'972'+x.slice(1):x.replace('+',''))};
 const rt=t=>String(t).split('\n').map(l=>l.trim()?'\u200F'+l:l).join('\n');
 let K=null,salt=null,R=null,V='home',F='',Q='',CU='',CUST_F='',VALID_F='',VIEW='card',cur=null,edit=null,SO='',GATE=false,FID=null,REM=false,EVT='',NV=false,H=0,SCAN_Q=[],SCAN_CUR=null;
-let S={p:[],family:{people:[],assets:[]},claims:[],renewals:[],tasks:[],history:[],me:'',bk:0,settings:{localOnly:false,autoLockMin:5,aiProvider:'gemini',aiKeys:{},aiAllowed:['gemini','groq','claude'],requireConsent:true},ai:{}};
-function defaults(s){s.p=s.p||[];s.family=s.family||{people:[],assets:[]};s.family.people=s.family.people||[];s.family.assets=s.family.assets||[];s.claims=s.claims||[];s.renewals=s.renewals||[];s.tasks=s.tasks||[];s.history=s.history||[];s.chat=s.chat||[];s.settings=Object.assign({theme:'light',gh:{repo:'',branch:'main',file:'insurance-vault.html',versionFile:'version.json'},localOnly:false,autoLockMin:5,aiProvider:'gemini',aiKeys:{},aiAllowed:['gemini','groq','claude'],requireConsent:true},s.settings||{});s.ai=s.ai||{};return s}
+let S={p:[],family:{people:[],assets:[]},claims:[],renewals:[],tasks:[],history:[],me:'',bk:0,settings:{localOnly:false,autoLockMin:5,aiProvider:'gemini',aiKeys:{},modelCache:{},aiAllowed:['gemini','groq','claude'],requireConsent:true},ai:{}};
+function defaults(s){s.p=s.p||[];s.family=s.family||{people:[],assets:[]};s.family.people=s.family.people||[];s.family.assets=s.family.assets||[];s.claims=s.claims||[];s.renewals=s.renewals||[];s.tasks=s.tasks||[];s.history=s.history||[];s.chat=s.chat||[];s.settings=Object.assign({theme:'light',gh:{repo:'',branch:'main',file:'insurance-vault.html',versionFile:'version.json'},localOnly:false,autoLockMin:5,aiProvider:'gemini',aiKeys:{},modelCache:{},aiAllowed:['gemini','groq','claude'],requireConsent:true},s.settings||{});s.ai=s.ai||{};if(s.settings.aiKeys){for(const p of Object.keys(s.settings.aiKeys)){const ck=cleanKey(s.settings.aiKeys[p]);if(!ck){delete s.settings.aiKeys[p];continue}s.settings.aiKeys[p]=ck;const det=detectKeyProvider(ck);if(det&&det!==p){if(!s.settings.aiKeys[det])s.settings.aiKeys[det]=ck;delete s.settings.aiKeys[p];}}}return s}
 function logHist(action,detail){try{S.history.unshift({ts:Date.now(),action,detail:String(detail||'').slice(0,160)});S.history=S.history.slice(0,200)}catch(e){}}
 async function save(){if(!K)throw new Error('הכספת נעולה');try{const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},K,enc.encode(JSON.stringify(S)));await idbSet('v',{s:b64(salt),i:b64(iv),d:b64(ct)});return true}catch(e){toast('השמירה נכשלה — המידע לא נשמר. נסה שוב');throw e}}
 async function saveQuiet(){try{await save();return true}catch(e){return false}}
@@ -795,12 +795,31 @@ function settingsV(){return `<div class="card"><h3>גרסה ועדכון</h3><di
 <div class="small">כאשר מצב מקומי בלבד פעיל, סריקת AI וספריות PDF/OCR חיצוניות חסומות. ייבוא טקסט שהודבק עדיין עובד.</div></div>
 <div class="card"><h3>הגדרות AI</h3><label>ספק ברירת מחדל</label><select id="aiProv" onchange="setProv(this.value)">${['gemini','groq','claude'].map(x=>`<option ${S.settings.aiProvider===x?'selected':''}>${x}</option>`).join('')}</select>
 <label>מפתח ${S.settings.aiProvider}</label><input id="aiKey" type="password" placeholder="הדבק מפתח — נשמר מוצפן בכספת" value="${esc(S.settings.aiKeys[S.settings.aiProvider]||'')}"><button class="btn" onclick="saveKey()">שמור מפתח</button>
-<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div><div class="mut" style="margin-top:6px">מפתחות מוגדרים: ${['gemini','groq','claude'].map(p=>p+': '+(S.settings.aiKeys[p]?'✓':'✗')).join(' · ')}</div><div class="row" style="margin-top:8px"><button class="btn o" onclick="testAI()">בדוק חיבור AI</button></div><div id="aiTestRes" class="mut" style="margin-top:6px"></div><div class="mut" style="margin-top:4px">אם המפתח שלך מתחיל ב־gsk_ הוא מפתח Groq — האפליקציה תזהה אותו אוטומטית ותשמור אותו תחת Groq, גם אם התפריט היה על ספק אחר. כששני מפתחות מוגדרים (Groq + Gemini), כל מסמך נקרא על ידי שניהם והתוצאות מצולבות: מה שאחד פספס והשני מצא נשמר, סתירה מוכרעת לפי מה שמופיע במסמך, ופרק מומצא (שלא במסמך) נזרק.</div></div>
+<div class="small">המפתח נשמר מוצפן בתוך הכספת בלבד. כל סריקת AI דורשת אישור מפורש שלך לאותה סריקה.</div><div class="mut" style="margin-top:6px">מפתחות מוגדרים: ${['gemini','groq','claude'].map(p=>p+': '+(S.settings.aiKeys[p]?'✓':'✗')).join(' · ')}</div><div class="row" style="margin-top:8px"><button class="btn o" onclick="testAI()">בדוק חיבור AI</button><button class="btn o" onclick="refreshModels()">גלה מודלים חיים (דינמי)</button></div><div class="mut" style="margin-top:4px">המודלים נגלים אוטומטית מהשרת של הספק (מתרענן כל 24 שעות) — לא רשימה קשיחה. מודל שמפסיק לעבוד נזרק מהרשימה אוטומטית.</div><div id="aiTestRes" class="mut" style="margin-top:6px"></div><div class="mut" style="margin-top:4px">הדבק את המפתח ולחץ שמור מפתח (הדבקה לבד לא שומרת). תווים בלתי־נראים מההעתקה מוסרים אוטומטית. אם המפתח שלך מתחיל ב־gsk_ הוא מפתח Groq — האפליקציה תזהה אותו אוטומטית ותשמור אותו תחת Groq, גם אם התפריט היה על ספק אחר. כששני מפתחות מוגדרים (Groq + Gemini), כל מסמך נקרא על ידי שניהם והתוצאות מצולבות: מה שאחד פספס והשני מצא נשמר, סתירה מוכרעת לפי מה שמופיע במסמך, ופרק מומצא (שלא במסמך) נזרק.</div></div>
 <div class="card"><h3>נתונים</h3><button class="btn" onclick="nav('backup')">גיבוי ושחזור</button><button class="btn o" onclick="nav('import')">ייבוא פוליסה מ־Claude (הדבק)</button><button class="btn o" onclick="exportJSON()">ייצוא JSON (כל השדות — כולל תדירות)</button><button class="btn o" onclick="nav('family')">תיק משפחתי</button><button class="btn o" onclick="nav('coverage')">מפת כיסויים</button></div>
 <div class="card"><h3>אודות</h3><div class="mut">גרסה ${BUILD} · קובץ HTML יחיד · ללא שרת · IndexedDB + AES-GCM · PBKDF2 300,000 איטרציות</div><div class="mut" style="margin-top:6px">המידע באפליקציה אינו חוות דעת ביטוחית או משפטית. ההחלטה הסופית תמיד בידי המבטח.</div></div>`}
 async function setAutoLock(v){S.settings.autoLockMin=Number(v);await saveQuiet();toast('נשמר')}
 async function setProv(v){S.settings.aiProvider=v;await saveQuiet();render()}
-async function saveKey(){const k=$('#aiKey').value.trim();const det=detectKeyProvider(k);let target=S.settings.aiProvider;if(det&&det!==target){target=det;S.settings.aiProvider=det}if(!k){delete S.settings.aiKeys[target];await saveQuiet();render();toast('מפתח נמחק');return}S.settings.aiKeys[target]=k;await saveQuiet();render();toast(det&&det!==S.settings.aiProvider?'מפתח נשמר מוצפן':(det?'זוהה מפתח '+det+' — נשמר תחת '+det+' (לא תחת הספק הקודם)':'מפתח נשמר מוצפן'))}
+async function saveKey(){
+  const raw=$('#aiKey')?$('#aiKey').value:'';
+  const k=cleanKey(raw);
+  const prev=S.settings.aiProvider;
+  const det=detectKeyProvider(k);
+  const target=det||prev;
+  if(det) S.settings.aiProvider=det;
+  if(!k){
+    delete S.settings.aiKeys[target];
+    const ok=await saveQuiet(); render();
+    toast(ok?'מפתח נמחק':'המחיקה נכשלה — נסה שוב');
+    return;
+  }
+  S.settings.aiKeys[target]=k;
+  const ok=await saveQuiet(); render();
+  if(!ok){ toast('השמירה נכשלה — המפתח לא נשמר. נסה שוב'); return; }
+  if(det&&det!==prev) toast('זוהה מפתח '+det+' — נשמר תחת '+det);
+  else if(det) toast('מפתח '+det+' נשמר מוצפן');
+  else toast('מפתח נשמר מוצפן — אבל הוא לא נראה כמו מפתח Gemini/Groq/Claude. בדוק שהעתקת את המפתח המלא, בלי רווחים.');
+}
 function backupV(){return `<div class="card"><h3>גיבוי</h3><div class="mut">הגיבוי הוא העתק מוצפן של הכספת. הוא אינו מכיל את הסיסמה. שמור אותו במקום בטוח.</div><div class="mut">גיבוי אחרון: ${S.bk?new Date(S.bk).toLocaleString('he-IL'):'עדיין לא גובה'}</div><button class="btn" onclick="doBackup()">צור גיבוי ושמור / שתף</button></div>
 <div class="card"><h3>שחזור — עם הגנה</h3><div class="mut">לפני שחזור ניצור אוטומטית גיבוי של הכספת הנוכחית, ונבדוק שהגיבוי החדש תקין ותואם לסיסמה שלך. אם הבדיקה נכשלת — שום דבר לא יוחלף.</div><input id="rsf" type="file" accept=".txt,.json" onchange="loadRestoreFile(this)"><textarea id="rs" rows="5" placeholder="או הדבק כאן את תוכן הגיבוי"></textarea><button class="btn red" onclick="doRestore()">שחזר — לאחר בדיקה</button><div class="small">הגיבוי האוטומטי לפני שחזור נשמר גם במכשיר תחת “auto-backup-before-restore”.</div></div>
 <button class="btn o" onclick="nav('settings')">חזרה להגדרות</button>`}
@@ -826,8 +845,14 @@ async function askAI(){const q=$('#evt').value.trim();if(!q)return toast('כתו
 if(!confirm(`לשלוח שאלה ל־AI (${S.settings.aiProvider})? השאלה תכלול תקצירי פוליסות בלבד, לא מסמכים מלאים.`))return;const out=$('#evr');out.textContent='שואל את ה־AI…';try{const ctx=S.p.map(p=>({id:p.id,co:p.co,type:p.type,num:p.num,asset:p.asset,end:p.end,cov:(p.cov||'').slice(0,1200),ex:(p.ex||'').slice(0,600)}));const ans=await AI(`ענה בעברית על השאלה: ${q}\nפוליסות:\n${JSON.stringify(ctx,null,1)}\nהחזר JSON: {verdict, summary, matches:[{id,v,why,steps:[]}], urgent, missing}. אל תמציא. אם לא ברור כתוב לא ברור.`);const o=JSON.parse(ans.match(/\{[\s\S]*\}/)[0]);out.innerHTML=`<div class="card"><b>${esc(o.verdict||'לא ברור')}</b><div>${esc(o.summary||'')}</div>${(o.matches||[]).map(m=>{const p=P(m.id);return p?`<div style="margin-top:10px"><b>${esc(m.v)} · ${esc(p.co)} · ${esc(p.type)}</b><div class="mut">${esc(m.why||'')}</div><div class="mut">${(m.steps||[]).join(' · ')}</div><button class="btn sm" onclick="openPolicy('${p.id}')">פתח פוליסה</button></div>`:''}).join('')}<div class="mut" style="margin-top:8px">ניתוח אוטומטי בלבד. ההחלטה הסופית בידי המבטח.</div></div>`}catch(e){out.textContent='החיפוש נכשל ('+String(e.code||e.message||'שגיאה')+')'}}
 async function claimDoc(id){const c=S.claims.find(x=>x.id===id);if(!c)return;if(S.settings.localOnly)return toast('במצב מקומי בלבד AI חסום.');if(!confirm(`לשלוח את פרטי האירוע ל־AI (${S.settings.aiProvider}) לצורך ניסוח כתב תביעה?`))return;const out=$('#claimDocOut');out.textContent='כותב…';try{const txt=await AI(`כתוב כתב תביעה רשמי בעברית לחברת ביטוח. אירוע: ${c.title} בתאריך ${c.date}. תיאור: ${c.note}. פוליסות: ${JSON.stringify((c.policyIds||[]).map(i=>P(i)).filter(Boolean).map(p=>({co:p.co,type:p.type,num:p.num})))}. מבנה: נושא, פנייה, פרטי פוליסה, תיאור, כיסויים רלוונטיים, בקשה לפתיחת תביעה ורשימת מסמכים. אל תמציא עובדות. כתוב טקסט רגיל בלבד.`);out.innerHTML=`<textarea rows="14" style="margin-top:10px">${esc(txt)}</textarea><button class="btn" onclick="cp(document.querySelector('#claimDocOut textarea').value)">העתק כתב תביעה</button>`}catch(e){out.textContent='ההפקה נכשלה'}}
 async function fetchWithTimeout(url,options={},timeoutMs=65000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{return await fetch(url,{...options,signal:controller.signal})}catch(e){if(e.name==='AbortError')throw{code:'פסק זמן: ספק ה-AI לא השיב בתוך 65 שניות'};throw{code:'שגיאת רשת: '+(e.message||'אין תגובה מהשרת')}}finally{clearTimeout(timer)}}
+function cleanKey(k){
+  // Keys are [A-Za-z0-9_-] only. Strip ALL whitespace + invisible/format chars
+  // (RTL marks U+200F/U+200E, zero-width U+200B, BOM U+FEFF, NBSP, bidi controls).
+  // Pasting a key from an RTL page often sneaks one in, and trim() does NOT remove it.
+  return String(k||'').replace(/[\s\u200B-\u200F\uFEFF\u00A0\u2060\u180E\u202A-\u202E\u2066-\u2069]/g,'');
+}
 function detectKeyProvider(key){
-  const k=String(key||'').trim();
+  const k=cleanKey(key);
   if(k.startsWith('gsk_')) return 'groq';
   if(k.startsWith('sk-ant-')) return 'claude';
   if(k.startsWith('AIza')) return 'gemini';
@@ -852,6 +877,12 @@ function parseAIJson(raw){
   try{ return JSON.parse(repaired); }catch(e2){ throw new Error('תשובת AI לא תקינה — JSON לא ניתן לפענוח'); }
 }
 async function testAI(){
+  // If the user pasted a key but didn't click Save, save it now — otherwise
+  // the test would check the OLD stored key and report "no key".
+  try{
+    const inp=document.getElementById('aiKey');
+    if(inp && cleanKey(inp.value)) await saveKey();
+  }catch(e){}
   const out=document.getElementById('aiTestRes');
   if(out) out.textContent='בודק חיבור AI…';
   try{
@@ -866,36 +897,186 @@ async function testAI(){
     return false;
   }
 }
+// --- Dynamic model discovery (9.0.9): never hardcode the live list ---
+// Providers retire models constantly (Gemini 2.0/2.5 died in 2026, Groq retired
+// llama-3.3/3.1). So the app asks EACH provider for its live model list,
+// caches it for 24h, and only falls back to the baked-in list if discovery
+// fails. A model that 404s is dropped from the cache automatically.
+const MODEL_FALLBACK={gemini:['gemini-3.8-flash','gemini-3.6-flash','gemini-3-flash','gemini-3.5-flash-lite'],groq:['openai/gpt-oss-120b','openai/gpt-oss-20b'],claude:['claude-sonnet-4-5-20250929','claude-sonnet-4-20250514']};
+const MODEL_CACHE_TTL=24*60*60*1000;
+function dropModelFromCache(prov,model){
+  const e=S.settings.modelCache&&S.settings.modelCache[prov];
+  if(e&&e.models&&e.models.includes(model)){e.models=e.models.filter(m=>m!==model);saveQuiet();}
+}
+async function discoverModels(prov,key){
+  if(prov==='gemini'){
+    const r=await fetchWithTimeout('https://generativelanguage.googleapis.com/v1beta/models?key='+encodeURIComponent(key),{method:'GET',headers:{'Content-Type':'application/json'}});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw{code:'Gemini ListModels ('+r.status+'): '+(j.error?.message||r.status)};
+    const list=(j.models||[]).map(m=>({id:String(m.name||'').replace(/^models\//,''),methods:m.supportedGenerationMethods||[]}));
+    const nonText=/embedding|image|imagen|tts|live|transcribe|nano|video|veo|gemma|a2a/i;
+    const ver=m=>{const v=m.id.match(/gemini-(\d+)(?:\.(\d+))?/);return v?[Number(v[1]),Number(v[2]||0)]:[0,0];};
+    let f=list.filter(m=>m.methods.includes('generateContent')&&!nonText.test(m.id)&&!/preview|experimental/i.test(m.id));
+    f=f.filter(m=>ver(m)[0]>=3); // all 1.x/2.x generations are retired
+    if(!f.length) f=list.filter(m=>m.methods.includes('generateContent')&&!nonText.test(m.id));
+    f.sort((a,b)=>{
+      const va=ver(a),vb=ver(b);
+      const d=(vb[0]-va[0])||(vb[1]-va[1]);
+      if(d) return d;
+      const tier=x=>/flash-lite/i.test(x)?1:/pro/i.test(x)?2:/flash/i.test(x)?3:0;
+      return tier(b.id)-tier(a.id);
+    });
+    return [...new Set(f.map(m=>m.id))];
+  }
+  if(prov==='groq'){
+    const r=await fetchWithTimeout('https://api.groq.com/openai/v1/models',{method:'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key}});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok) throw{code:'Groq ListModels ('+r.status+'): '+(j.error?.message||r.status)};
+    const f=(j.data||[]).filter(m=>m.active!==false&&!/whisper|tts|playai|embedding|compound|distil|guard/i.test(m.id||''));
+    const score=m=>{
+      let s=0;
+      if(/gpt-oss/i.test(m.id)) s+=1000;
+      const sz=(m.id.match(/(\d+)b/i)||[])[1]; if(sz) s+=Number(sz);
+      if(/kimi/i.test(m.id)) s+=50;
+      s+=(m.context_window||0)/100000;
+      return s;
+    };
+    f.sort((a,b)=>score(b)-score(a));
+    return [...new Set(f.map(m=>m.id))];
+  }
+  if(prov==='claude'){
+    let all=[],after=null;
+    for(let page=0;page<5;page++){
+      const url='https://api.anthropic.com/v1/models?limit=1000'+(after?'&after_id='+encodeURIComponent(after):'');
+      const r=await fetchWithTimeout(url,{method:'GET',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok) throw{code:'Claude ListModels ('+r.status+'): '+(j.error?.message||r.status)};
+      all=all.concat(j.data||[]);
+      if(!j.has_more) break;
+      after=j.last_id;
+    }
+    const f=all.filter(m=>!/instant|claude-2/i.test(m.id||''));
+    const fam=m=>/sonnet/i.test(m.id)?3:/opus/i.test(m.id)?2:/haiku/i.test(m.id)?1:0;
+    f.sort((a,b)=>(fam(b)-fam(a))||(new Date(b.created_at||0)-new Date(a.created_at||0)));
+    return [...new Set(f.map(m=>m.id))];
+  }
+  throw{code:'ספק AI לא מוכר: '+prov};
+}
+async function getModels(prov,key){
+  if(!S.settings.modelCache) S.settings.modelCache={};
+  const entry=S.settings.modelCache[prov];
+  if(entry&&entry.models&&entry.models.length&&(Date.now()-entry.at)<MODEL_CACHE_TTL) return entry.models;
+  try{
+    const models=await discoverModels(prov,key);
+    if(models&&models.length){
+      S.settings.modelCache[prov]={models,at:Date.now()};
+      saveQuiet();
+      return models;
+    }
+  }catch(e){}
+  if(entry&&entry.models&&entry.models.length) return entry.models; // stale cache > nothing
+  return MODEL_FALLBACK[prov]||[];
+}
+async function refreshModels(){
+  const prov=S.settings.aiProvider;
+  const key=cleanKey(S.settings.aiKeys[prov]||S.ai[prov]);
+  if(!key){toast('אין מפתח ל־'+prov+' — הדבק מפתח קודם');return;}
+  if(!S.settings.modelCache) S.settings.modelCache={};
+  delete S.settings.modelCache[prov];
+  const out=document.getElementById('aiTestRes');
+  if(out) out.textContent='מגלה מודלים חיים מ־'+prov+'…';
+  try{
+    const models=await getModels(prov,key);
+    const live=!!S.settings.modelCache[prov];
+    const src=live?'רשימה חיה מהשרת של '+prov+' (נשמרה ל־24 שעות)':'רשימת גיבוי — הגילוי נכשל, משתמשים ברשימה השמורה';
+    if(out) out.innerHTML='<b>מודלים חיים של '+prov+':</b> '+esc(models.join(', '))+'<div class="mut" style="margin-top:4px">מקור: '+src+'. הרשימה מתרעננת אוטומטית כל 24 שעות, ומודל שמחזיר 404 נזרק מהרשימה אוטומטית.</div>';
+    toast('נמצאו '+models.length+' מודלים חיים ל־'+prov);
+  }catch(e){
+    if(out) out.textContent='הגילוי נכשל: '+String(e.code||e.message||e);
+  }
+}
 async function aiRequest(prov,key,prompt){
  const headers={'Content-Type':'application/json'};
  if(prov==='gemini'){
-  const models=['gemini-3.8-flash','gemini-2.5-flash','gemini-2.0-flash'];let last='';
-  for(const model of models){try{const r=await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers,body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0,responseMimeType:'application/json'}})});
-   const j=await r.json().catch(()=>({}));if(!r.ok){last='Gemini '+model+': '+(j.error?.message||r.status);if([400,404].includes(r.status))continue;throw{code:last}}
-   const answer=j.candidates?.[0]?.content?.parts?.filter(x=>!x.thought).map(x=>x.text||'').join('')||'';if(answer.trim())return answer;last='Gemini '+model+': התקבלה תשובה ריקה';
-  }catch(e){last=String(e.code||e.message||e);if(/פסק זמן/.test(last))break}}
-  throw{code:last||'Gemini לא החזיר תשובה'}
+  // 2026-11: gemini-2.0-flash shut down 2026-06-01 (404 for everyone),
+  // gemini-2.5-flash 404 for new keys/projects. Only 3.x models are live.
+  const models=await getModels(prov,key);
+  const errs=[];
+  for(const model of models){
+   try{
+    const r=await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers,body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0,responseMimeType:'application/json'}})});
+    const jj=await r.json().catch(()=>({}));
+    if(!r.ok){
+     const msg='Gemini '+model+' ('+r.status+'): '+(jj.error?.message||r.status);
+     errs.push(msg);
+     if(r.status===404) dropModelFromCache(prov,model);
+     if([401,403].includes(r.status)) break; // key problem — every model will fail the same way
+     continue;
+    }
+    const answer=jj.candidates?.[0]?.content?.parts?.filter(x=>!x.thought).map(x=>x.text||'').join('')||'';
+    if(answer.trim()) return answer;
+    errs.push('Gemini '+model+': התקבלה תשובה ריקה');
+   }catch(e){
+    const msg=String(e.code||e.message||e);
+    errs.push('Gemini '+model+': '+msg);
+    if(/פסק זמן/.test(msg)) break;
+   }
+  }
+  throw{code:errs.join(' | ')||'Gemini לא החזיר תשובה'}
  }
  if(prov==='groq'){
   // Groq retired llama-3.3-70b-versatile and llama-3.1-8b-instant on 2026-08-16.
   // Use currently listed production GPT-OSS models and strict JSON mode.
-  const models=['openai/gpt-oss-120b','openai/gpt-oss-20b'];let last='';
-  for(const model of models){try{
-   const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0,reasoning_effort:'low',max_completion_tokens:4000,response_format:{type:'json_object'}})});
-   const j=await r.json().catch(()=>({}));
-   if(!r.ok){last='Groq '+model+': '+(j.error?.message||r.status);if(r.status===429){await new Promise(r2=>setTimeout(r2,8000));continue} if([400,401,404,422].includes(r.status))continue;throw{code:last}}
-   const a=j.choices?.[0]?.message?.content||'';if(a.trim())return a;last='Groq '+model+' החזיר תשובה ריקה';
-  }catch(e){last=String(e.code||e.message||e);if(/פסק זמן/.test(last))break}}
-  throw{code:last||'Groq לא החזיר תשובה'}
+  const models=await getModels(prov,key);const errs=[];
+  for(const model of models){
+   try{
+    const r=await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{...headers,Authorization:'Bearer '+key},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],temperature:0,reasoning_effort:'low',max_completion_tokens:4000,response_format:{type:'json_object'}})});
+    const jj=await r.json().catch(()=>({}));
+    if(!r.ok){
+     const msg='Groq '+model+' ('+r.status+'): '+(jj.error?.message||r.status);
+     errs.push(msg);
+     if(r.status===404) dropModelFromCache(prov,model);
+     if([401,403].includes(r.status)) break;
+     if(r.status===429){await new Promise(r2=>setTimeout(r2,8000));}
+     continue;
+    }
+    const a=jj.choices?.[0]?.message?.content||'';if(a.trim())return a;errs.push('Groq '+model+' החזיר תשובה ריקה');
+   }catch(e){
+    const msg=String(e.code||e.message||e);
+    errs.push('Groq '+model+': '+msg);
+    if(/פסק זמן/.test(msg)) break;
+   }
+  }
+  throw{code:errs.join(' | ')||'Groq לא החזיר תשובה'}
  }
  if(prov==='claude'){
-  let last='';for(const model of ['claude-sonnet-4-5-20250929','claude-sonnet-4-20250514']){const r=await fetchWithTimeout('https://api.anthropic.com/v1/messages',{method:'POST',headers:{...headers,'x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model,max_tokens:6000,messages:[{role:'user',content:prompt}]})});const j=await r.json().catch(()=>({}));if(!r.ok){last='Claude '+model+': '+(j.error?.message||r.status);if([400,404].includes(r.status))continue;throw{code:last}}const a=(j.content||[]).map(x=>x.text||'').join('');if(a.trim())return a;last='Claude החזיר תשובה ריקה'}throw{code:last||'Claude לא החזיר תשובה'}
+  const errs=[];
+  const models=await getModels(prov,key);
+  for(const model of models){
+   try{
+    const r=await fetchWithTimeout('https://api.anthropic.com/v1/messages',{method:'POST',headers:{...headers,'x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model,max_tokens:6000,messages:[{role:'user',content:prompt}]})});
+    const jj=await r.json().catch(()=>({}));
+    if(!r.ok){
+     const msg='Claude '+model+' ('+r.status+'): '+(jj.error?.message||r.status);
+     errs.push(msg);
+     if(r.status===404) dropModelFromCache(prov,model);
+     if([401,403].includes(r.status)) break;
+     continue;
+    }
+    const a=(jj.content||[]).map(x=>x.text||'').join('');if(a.trim())return a;errs.push('Claude החזיר תשובה ריקה');
+   }catch(e){
+    const msg=String(e.code||e.message||e);
+    errs.push('Claude '+model+': '+msg);
+    if(/פסק זמן/.test(msg)) break;
+   }
+  }
+  throw{code:errs.join(' | ')||'Claude לא החזיר תשובה'}
  }
  throw{code:'ספק AI לא מוכר'}
 }
 async function AI(prompt){
  const order=[S.settings.aiProvider,...(S.settings.aiAllowed||['gemini','groq','claude'])].filter((v,i,a)=>a.indexOf(v)===i);
- const errors=[];for(const prov of order){const key=S.settings.aiKeys[prov]||S.ai[prov];if(!key)continue;try{return await aiRequest(prov,key,prompt)}catch(e){errors.push(prov+': '+String(e.code||e.message||'שגיאה'));}}
+ const errors=[];for(const prov of order){const key=cleanKey(S.settings.aiKeys[prov]||S.ai[prov]);if(!key)continue;try{return await aiRequest(prov,key,prompt)}catch(e){errors.push(prov+': '+String(e.code||e.message||'שגיאה'));}}
  throw{code:errors.length?errors.join(' | '):'לא הוגדר מפתח API פעיל. הוסף מפתח AI בהגדרות.'}
 }
 
@@ -1007,7 +1188,7 @@ function mergeTwoAI(a,b,text){
 }
 async function aiExtractTyped(text,fileName){
   const prompt=buildExtractPrompt(text,fileName);
-  const keyOf=p=>(S.settings.aiKeys[p]||S.ai[p]||'');
+  const keyOf=p=>cleanKey(S.settings.aiKeys[p]||S.ai[p]||'');
   const dualProvs=['groq','gemini'].filter(p=>keyOf(p));
   if(dualProvs.length>=2){
     const settled=await Promise.allSettled(dualProvs.map(async p=>{
